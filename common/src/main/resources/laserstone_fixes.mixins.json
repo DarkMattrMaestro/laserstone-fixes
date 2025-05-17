@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.darkmattrmaestro.laserstone_fixes.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EntityLaserProjectileMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

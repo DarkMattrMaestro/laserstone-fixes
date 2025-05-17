@@ -1,0 +1,27 @@
+{
+  "formatVersion": 2,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "Fixes some aspects of laserstone",
+  "authors": [
+    "DarkMattrMaestro"
+  ],
+  "meta": {
+    "icon": "${mod_id}:icons/icon.png"
+  },
+  "entrypoints": {
+    "client_init": [
+      "com.darkmattrmaestro.laserstone_fixes.LaserstoneFixesPuzzle"
+    ]
+  },
+  "mixins": [
+    "laserstone_fixes.mixins.json",
+    "laserstone_fixes.puzzle.mixins.json"
+  ],
+  "dependencies": {
+    "cosmic-reach": ">=0.3.6",
+    "puzzle-loader": ">=2.0.9"
+  },
+  "accessManipulator": "laserstone_fixes.manipulator"
+}

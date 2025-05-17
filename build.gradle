@@ -1,0 +1,98 @@
+plugins {
+    id "java"
+    id "cosmicloom" apply(false)
+    id "jigsaw" apply(false)
+    id "com.github.johnrengelman.shadow" apply(false)
+    id "maven-publish"
+}
+
+
+
+
+
+
+
+
+
+
+subprojects {
+    apply plugin: 'java'
+    repositories {
+        maven {
+            name "JitPack"
+            url "https://jitpack.io"
+        }
+    }
+
+    processResources {
+        def resourceTargets = [ // Locations of where to inject the properties
+                "quilt.mod.json", "puzzle.mod.json"
+        ]
+
+        // Left item is the name in the target, right is the varuable name
+        def replaceProperties = [
+                "mod_version"     : project.version,
+                "mod_group"       : project.group,
+                "mod_name"        : rootProject.name,
+                "mod_id"          : id,
+        ]
+
+
+        inputs.properties replaceProperties
+        replaceProperties.put "project", project
+        filesMatching(resourceTargets) {
+            expand replaceProperties
+        }
+    }
+}
+//thanks sinful.soul
+tasks.register("runRenderDoc", Exec) {
+    def javaExecTask = rootProject.project(":quilt").tasks.named("runClient", JavaExec).get()
+    def javaHome = javaExecTask.javaLauncher.get().metadata.installationPath.asFile.absolutePath
+
+    commandLine = [
+            "C:\\Program Files\\RenderDoc\\renderdoccmd.exe",
+            "capture",
+            "--opt-hook-children",
+            "--wait-for-exit",
+            "--working-dir",
+            ".",
+            "$javaHome/bin/java.exe",
+            "-Xmx64m",
+            "-Xms64m",
+            "-Dorg.gradle.appname=gradlew",
+            "-Dorg.gradle.java.home=$javaHome",
+            "-classpath",
+            "gradle/wrapper/gradle-wrapper.jar",
+            "org.gradle.wrapper.GradleWrapperMain",
+            ":quilt:runClient"
+    ]
+}
+
+
+
+//application {
+//    // As Quilt is our loader, use its main class at:
+//    mainClass = "dev.crmodders.cosmicquilt.loader.knot.KnotClient"
+//}
+
+
+//applicationDefaultJvmArgs = [
+//        "-Dloader.development=true", // Allows stuff to be found through the classpath
+//        "-Dloader.gameJarPath=" + configurations.cosmicreach.asPath, // Defines path to Cosmic Reach
+//]
+
+//run {
+//    // To run this project in the game, depend on the creation of jar task
+//    dependsOn "jar"
+//
+//    // Change the run directory
+//    File runningDir = new File("run/")
+//    if (!runningDir.exists())
+//        runningDir.mkdirs()
+//    tasks.run.workingDir = runningDir
+//}
+
+
+
+
