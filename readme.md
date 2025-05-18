@@ -1,5 +1,5 @@
 # Laserstone Fixes
-Laserstone FIxes aims to fix a few quirks and bugs in the current implementation of laserstone.
+Laserstone Fixes aims to fix a few quirks and bugs in the current implementation of laserstone.
 
 ## Features Summary
 1. Fixes lasers clipping through blocks
