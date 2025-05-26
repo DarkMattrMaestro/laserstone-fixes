@@ -24,6 +24,9 @@ dependencies {
     // Cosmic Quilt
     modImplementation(loom.cosmicQuilt(cosmic_quilt_version))
 
+    // ModMenu (Wow! Cool!)
+    implementation "org.codeberg.CRModders:modmenu:$mod_menu_version"
+
 
 
     implementation project(":common")

@@ -25,7 +25,8 @@
     },
 
     "entrypoints": {
-      "init": "com.darkmattrmaestro.laserstone_fixes.LaserstoneFixesQuilt"
+      "init": "com.darkmattrmaestro.laserstone_fixes.LaserstoneFixesQuilt",
+      "modmenu": "com.darkmattrmaestro.laserstone_fixes.configs.LaserstoneFixesModMenu"
     },
 
     "depends": [
