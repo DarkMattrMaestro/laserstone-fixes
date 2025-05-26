@@ -58,7 +58,7 @@ public class LaserstoneFixesOptionMenu extends GameState {
     }
 
     private CRSlider createSettingsCREnumSlider(final TrackedValue<Integer> setting, List<String> settingEnum, final String prefix) {
-        CRSlider slider = new CRSlider((String)null, 0, enumString.size()-1, 1, false) {
+        CRSlider slider = new CRSlider((String)null, 0, settingEnum.size()-1, 1, false) {
             protected void onChangeEvent(ChangeListener.ChangeEvent event) {
                 float currentValue = this.getValue();
                 setting.setValue((int)currentValue);
@@ -79,7 +79,7 @@ public class LaserstoneFixesOptionMenu extends GameState {
     public void create() {
         super.create();
 
-        CRSlider CollisionBlockOrderingSlider = this.createSettingsCREnumSlider("collisionOrderMethod", LaserstoneFixesConfig.COLLISION_ORDER_METHOD_ENUM, this.collisionBlockOrderingSliderStr);
+        CRSlider CollisionBlockOrderingSlider = this.createSettingsCREnumSlider(LaserstoneFixesConfig.INSTANCE.collisionOrderMethod, LaserstoneFixesSettings.COLLISION_ORDER_METHOD_ENUM, this.collisionBlockOrderingSliderStr);
 
         CRButton doneButton = new CRButton(Lang.get("doneButton")) {
             public void onClick() {

@@ -144,7 +144,7 @@ public class EntityLaserProjectileMixin extends Entity {
     ////////////// updateConstraintsProxy //////////////
 
     @Unique
-    private boolean updateConstraintsProxyAXIS(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
+    private void updateConstraintsProxyAXIS(Zone zone, Vector3 targetPosition) {
         this.tmpEntityBoundingBox.set(this.localBoundingBox);
         this.tmpEntityBoundingBox.min.add(targetPosition);
         this.tmpEntityBoundingBox.max.add(targetPosition);
@@ -179,12 +179,12 @@ public class EntityLaserProjectileMixin extends Entity {
         this.position.set(targetPosition);
     }
 
+    /**
+     * Iterate through possible block collisions while
+     * following the laser's path as closely as possible
+     */
     @Unique
-    private boolean updateConstraintsProxyWEIGHTED(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
-        """
-        Iterate through possible block collisions while
-        following the laser's path as closely as possible
-        """
+    private void updateConstraintsProxyWEIGHTED(Zone zone, Vector3 targetPosition) {
         // TODO: Verify functionality
 
         this.tmpEntityBoundingBox.set(this.localBoundingBox);
