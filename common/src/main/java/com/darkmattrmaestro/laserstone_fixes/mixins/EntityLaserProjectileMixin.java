@@ -1,5 +1,7 @@
 package com.darkmattrmaestro.laserstone_fixes.mixins;
 
+import com.darkmattrmaestro.laserstone_fixes.configs.LaserstoneFixesSettings;
+
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import finalforeach.cosmicreach.blocks.BlockState;
@@ -138,12 +140,11 @@ public class EntityLaserProjectileMixin extends Entity {
         return false;
     }
 
-    @Inject(
-            method = "updateConstraints",
-            cancellable = true,
-            at = @At("HEAD")
-    )
-    private void updateConstraintsProxy(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
+    ////////////////////////////////////////////////////
+    ////////////// updateConstraintsProxy //////////////
+
+    @Unique
+    private boolean updateConstraintsProxyAXIS(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
         this.tmpEntityBoundingBox.set(this.localBoundingBox);
         this.tmpEntityBoundingBox.min.add(targetPosition);
         this.tmpEntityBoundingBox.max.add(targetPosition);
@@ -162,92 +163,6 @@ public class EntityLaserProjectileMixin extends Entity {
         boolean isPosX = targetPosition.x > this.lastPosition.x;
         boolean isPosY = targetPosition.y > this.lastPosition.y;
         boolean isPosZ = targetPosition.z > this.lastPosition.z;
-
-        /*
-//        // Iterate through possible block collisions while
-//        // following the laser's path as closely as possible
-//
-//        int dx = (int)Math.ceil(targetPosition.x - this.lastPosition.x);
-//        int dy = (int)Math.ceil(targetPosition.y - this.lastPosition.y);
-//        int dz = (int)Math.ceil(targetPosition.z - this.lastPosition.z);
-//
-//        int steps = dx + dy + dz;
-//
-//        int x = 0; int y = 0; int z = 0;
-//        for (int i = 0; i < steps; i++) {
-//            // TODO: precompute inverse deltas
-//            float ratioX = x / (float)dx;
-//            float ratioY = y / (float)dy;
-//            float ratioZ = z / (float)dz;
-//
-//            int difX = 0; int difY = 0; int difZ = 0;
-//
-//            // Prioritize the fastest axis in case of percentage tie
-//            if (ratioX == ratioY && ratioY == ratioZ) {
-//                if (dx > dy && dx > dz) { x++; difX = 1; }
-//                else if (dy > dz) { y++; difY = 1; }
-//                else { z++; difZ = 1; }
-//            }
-//            else if (ratioX == ratioY) {
-//                if (dx > dy) { x++; difX = 1; }
-//            }
-//            else if (ratioY == ratioZ) {
-//                if (dy > dz) { y++; difY = 1; }
-//            }
-//            else if (ratioX == ratioZ) {
-//                if (dx > dz) { x++; difZ = 1; }
-//            }
-//
-//            // Prioritize smallest percentage
-//            else if (ratioX < ratioY && ratioX < ratioZ) { x++; difX = 1; }
-//            else if (ratioY < ratioZ) { y++; difY = 1; }
-//            else { z++; difZ = 1; }
-//
-//            if (difX == 1) {
-//                labelLayerCheckYZ:
-//                for (int iy = 0; iy <= y; iy++) {
-//                    for (int iz = 0; iz <= z; iz++) {
-//                        if (checkBlock(x, iy, iz, targetPosition)) {
-//                            break labelLayerCheckYZ;
-//                        }
-//                    }
-//                }
-//            }
-//
-//            if (difY == 1) {
-//                labelLayerCheckXZ:
-//                for (int ix = 0; ix <= x; ix++) {
-//                    for (int iz = 0; iz <= z; iz++) {
-//                        if (checkBlock(ix, y, iz, targetPosition)) {
-//                            break labelLayerCheckXZ;
-//                        }
-//                    }
-//                }
-//            }
-//
-//            if (difZ == 1) {
-//                labelLayerCheckXY:
-//                for (int ix = 0; ix <= x; ix++) {
-//                    for (int iy = 0; iy <= y; iy++) {
-//                        if (checkBlock(ix, iy, z, targetPosition)) {
-//                            break labelLayerCheckXY;
-//                        }
-//                    }
-//                }
-//            }
-//
-////            labelLayerCheck:
-////            for(int ix = x - difX; ix >= minBx && bx <= maxBx; bx += isPosX ? 1 : -1) {
-////                for(int by = isPosY ? minBy : maxBy; by >= minBy && by <= maxBy; by += isPosY ? 1 : -1) {
-////                    for(int bz = isPosZ ? minBz : maxBz; bz >= minBz && bz <= maxBz; bz += isPosZ ? 1 : -1) {
-////                        if (checkBlock(bx, by, bz, targetPosition)) {
-////                            break labelLayerCheck;
-////                        }
-////                    }
-////                }
-////            }
-//        }
-         */
 
         label76:
         for(int bx = isPosX ? minBx : maxBx; bx >= minBx && bx <= maxBx; bx += isPosX ? 1 : -1) {
@@ -262,104 +177,36 @@ public class EntityLaserProjectileMixin extends Entity {
 
         this.updateRefraction(targetPosition);
         this.position.set(targetPosition);
-
-        /*
-        this.tmpEntityBoundingBox.set(this.localBoundingBox);
-        this.tmpEntityBoundingBox.min.add(targetPosition);
-        this.tmpEntityBoundingBox.max.add(targetPosition);
-        this.tmpEntityBoundingBox.update();
-        this.collidedX = false;
-        this.collidedY = false;
-        this.collidedZ = false;
-        int minBx = (int)Math.floor((double)this.tmpEntityBoundingBox.min.x);
-        int minBy = (int)Math.floor((double)this.tmpEntityBoundingBox.min.y);
-        int minBz = (int)Math.floor((double)this.tmpEntityBoundingBox.min.z);
-        int maxBx = (int)Math.floor((double)this.tmpEntityBoundingBox.max.x);
-        int maxBy = (int)Math.floor((double)this.tmpEntityBoundingBox.max.y);
-        int maxBz = (int)Math.floor((double)this.tmpEntityBoundingBox.max.z);
-
-        // Axis-Aligned Directions (is axis positive)
-        boolean isPosX = targetPosition.x > this.lastPosition.x;
-        boolean isPosY = targetPosition.y > this.lastPosition.y;
-        boolean isPosZ = targetPosition.z > this.lastPosition.z;
-
-        label76:
-        for(int bx = maxBx; bx >= minBx; --bx) {
-            for(int by = minBy; by <= maxBy; ++by) {
-                for(int bz = minBz; bz <= maxBz; ++bz) {
-                    if (bx == this.sourceBlockX && by == this.sourceBlockY && bz == this.sourceBlockZ) { continue; }
-
-                    BlockState blockAdj = zone.getBlockState(bx, by, bz);
-                    if (blockAdj == null || blockAdj.walkThrough || !blockAdj.stopsLasers) { continue; }
-                    LaserstoneFixes.LOGGER.info("-1--- {}", blockAdj.getName());
-
-                    // Initial collision check with main AABB
-                    blockAdj.getBoundingBox(this.tmpBlockBoundingBox, bx, by, bz);
-//                    if (!this.tmpBlockBoundingBox.intersects(this.tmpEntityBoundingBox)) { continue; } // Old Check
-                    Segment potentialSegment = new Segment(lastPosition, targetPosition);
-                    if (!CustomGameMath.segmentAABBTest(potentialSegment, CustomGameMath.expandAABB(this.tmpBlockBoundingBox, this.radius))) { continue; }
-
-                    LaserstoneFixes.LOGGER.info("-2--- {}", blockAdj.getName());
-
-                    blockAdj.getAllBoundingBoxes(this.tmpBlockBoundingBoxes, bx, by, bz);
-                    for (BoundingBox bb : this.tmpBlockBoundingBoxes) {
-                        // Secondary collision checks with child AABBs
-//                        if (!bb.intersects(this.tmpEntityBoundingBox)) { continue; } // Old Check
-                        LaserstoneFixes.LOGGER.info("    - A: {}", potentialSegment.a);
-                        LaserstoneFixes.LOGGER.info("    - B: {}", potentialSegment.b);
-                        LaserstoneFixes.LOGGER.info("    - bb: {}", bb);
-                        if (!CustomGameMath.segmentAABBTest(potentialSegment, CustomGameMath.expandAABB(bb, this.radius))) { continue; }
-
-                        LaserstoneFixes.LOGGER.info("-3--- {}", blockAdj.getName());
-
-//                        // ???? What does this do?
-//                        float dist = GameMath.distanceBoundingBoxPoint(bb, this.lastPosition);
-//                        float len = this.lastPosition.dst(targetPosition);
-//                        if (len == 0.0F || dist == 0.0F) {
-//                            break label76;
-//                        }
-//
-//                        if (dist > this.radius) {
-//                            dist -= this.radius;
-//                        }
-//
-//                        float ratio = dist / len;
-//                        float oldTargetX = targetPosition.x;
-//                        float oldTargetY = targetPosition.y;
-//                        float oldTargetZ = targetPosition.z;
-//                        targetPosition.x = this.lastPosition.x + ratio * (targetPosition.x - this.lastPosition.x);
-//                        targetPosition.y = this.lastPosition.y + ratio * (targetPosition.y - this.lastPosition.y);
-//                        targetPosition.z = this.lastPosition.z + ratio * (targetPosition.z - this.lastPosition.z);
-                        this.onCollideWithBlock((Axis) null, blockAdj, bx, by, bz);
-                        if (this.isDead()) {
-                            LaserstoneFixes.LOGGER.info("-4--- ");
-                            this.tmpEntityBoundingBox.set(this.localBoundingBox);
-                            this.tmpEntityBoundingBox.min.add(targetPosition);
-                            this.tmpEntityBoundingBox.max.add(targetPosition);
-                            this.tmpEntityBoundingBox.update();
-                            break label76;
-                        }
-
-//                        targetPosition.set(targetPosition);
-                        break;
-                    }
-                }
-            }
-        }
-//
-//        LaserstoneFixes.LOGGER.info("-DONE Check\n");
-//        try {
-//            Thread.sleep(100);
-//        } catch (Exception e) {
-//
-//        }
-//
-        this.updateRefraction(targetPosition);
-        this.position.set(targetPosition);
-        */
-
-        ci.cancel();
     }
+
+    @Unique
+    private boolean updateConstraintsProxyWEIGHTED(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
+        // TODO: Implement
+    }
+
+    @Inject(
+            method = "updateConstraints",
+            cancellable = true,
+            at = @At("HEAD")
+    )
+    private void updateConstraintsProxy(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
+        if (LaserstoneFixesSettings.collisionOrderMethod == 1) {
+            updateConstraintsProxyAXIS(zone, targetPosition);
+            ci.cancel();
+            return;
+        }
+        
+        if (LaserstoneFixesSettings.collisionOrderMethod == 2) {
+            updateConstraintsProxyWEIGHTED(zone, targetPosition);
+            ci.cancel();
+            return;
+        }
+
+        // If collisionOrderMethod is 0, pass to vanilla implementation
+    }
+
+    ////////////// updateConstraintsProxy //////////////
+    ////////////////////////////////////////////////////
 
     @Shadow protected void updateRefraction(Vector3 targetPosition) {}
 }
