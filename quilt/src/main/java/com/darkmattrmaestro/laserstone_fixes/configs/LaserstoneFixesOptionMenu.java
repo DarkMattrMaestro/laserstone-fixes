@@ -29,7 +29,6 @@ import java.util.Objects;
 
 public class LaserstoneFixesOptionMenu extends GameState {
     private final String collisionBlockOrderingSliderStr = "Laser Collision Check Order: "; // TODO: Use Lang.get()
-    private final List<String> collisionBlockOrderingEnumStr = Arrays.asList("VANILLA", "AXIS", "WEIGHTED");
     private final NumberFormat intFormat = new DecimalFormat("#");
     private final NumberFormat percentFormat = Lang.getPercentFormatter();
     private GameState previousState;
@@ -58,26 +57,18 @@ public class LaserstoneFixesOptionMenu extends GameState {
         return slider;
     }
 
-    private CRSlider createSettingsCREnumSlider(final String setting, final String prefix, final List<String> enumString) {
-        final TrackedValue<Integer> settingObj;
-        try {
-            settingObj = (TrackedValue<Integer>) LaserstoneFixesConfig.class.getField(setting).get(LaserstoneFixesConfig.class);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    private CRSlider createSettingsCREnumSlider(final TrackedValue<Integer> setting, List<String> settingEnum, final String prefix) {
         CRSlider slider = new CRSlider((String)null, 0, enumString.size()-1, 1, false) {
             protected void onChangeEvent(ChangeListener.ChangeEvent event) {
                 float currentValue = this.getValue();
-                settingObj.setValue((int)currentValue);
-                String formattedValue = LaserstoneFixesConfig.ConfigEnums.get(setting).get((int)currentValue);
+                setting.setValue((int)currentValue);
+                String formattedValue = settingEnum.get((int)currentValue);
 
                 this.setText(prefix + formattedValue);
             }
         };
         slider.setWidth(500.0F);
-        slider.setValue(settingObj.value());
+        slider.setValue(setting.value());
         return slider;
     }
 
@@ -88,7 +79,7 @@ public class LaserstoneFixesOptionMenu extends GameState {
     public void create() {
         super.create();
 
-        CRSlider CollisionBlockOrderingSlider = this.createSettingsCREnumSlider("collisionOrderMethod", this.collisionBlockOrderingSliderStr, this.collisionBlockOrderingEnumStr);
+        CRSlider CollisionBlockOrderingSlider = this.createSettingsCREnumSlider("collisionOrderMethod", LaserstoneFixesConfig.COLLISION_ORDER_METHOD_ENUM, this.collisionBlockOrderingSliderStr);
 
         CRButton doneButton = new CRButton(Lang.get("doneButton")) {
             public void onClick() {

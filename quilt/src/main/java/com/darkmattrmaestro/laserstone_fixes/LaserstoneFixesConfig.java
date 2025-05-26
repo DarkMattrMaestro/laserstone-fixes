@@ -11,10 +11,7 @@ import java.util.*;
 public class LaserstoneFixesConfig extends ReflectiveConfig {
     public static final LaserstoneFixesConfig INSTANCE = QuiltConfig.create("laserstone_fixes", "laserstone_fixes", LaserstoneFixesConfig.class);
 
-    public static final Map<String, List<String>> ConfigEnums = new HashMap<String, List<String>>() {{
-        put("collisionOrderMethod", Arrays.asList("VANILLA (Directional)", "AXIS", "WEIGHTED"));
-    }};
-
     @Comment("The laser collision block ordering method to use. Options: 'VANILLA', 'AXIS', 'WEIGHTED'")
     public final TrackedValue<Integer> collisionOrderMethod = this.value(0);
+    public static final List<String> COLLISION_ORDER_METHOD_ENUM = Arrays.asList("VANILLA", "AXIS", "WEIGHTED");
 }
