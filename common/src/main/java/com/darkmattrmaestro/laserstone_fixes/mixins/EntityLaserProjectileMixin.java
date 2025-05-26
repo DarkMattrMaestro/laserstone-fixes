@@ -181,7 +181,101 @@ public class EntityLaserProjectileMixin extends Entity {
 
     @Unique
     private boolean updateConstraintsProxyWEIGHTED(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
-        // TODO: Implement
+        """
+        Iterate through possible block collisions while
+        following the laser's path as closely as possible
+        """
+        // TODO: Verify functionality
+
+        this.tmpEntityBoundingBox.set(this.localBoundingBox);
+        this.tmpEntityBoundingBox.min.add(targetPosition);
+        this.tmpEntityBoundingBox.max.add(targetPosition);
+        this.tmpEntityBoundingBox.update();
+        this.collidedX = false;
+        this.collidedY = false;
+        this.collidedZ = false;
+        int minBx = (int)Math.floor((double)this.tmpEntityBoundingBox.min.x);
+        int minBy = (int)Math.floor((double)this.tmpEntityBoundingBox.min.y);
+        int minBz = (int)Math.floor((double)this.tmpEntityBoundingBox.min.z);
+        int maxBx = (int)Math.floor((double)this.tmpEntityBoundingBox.max.x);
+        int maxBy = (int)Math.floor((double)this.tmpEntityBoundingBox.max.y);
+        int maxBz = (int)Math.floor((double)this.tmpEntityBoundingBox.max.z);
+ 
+        int dx = (int)Math.ceil(targetPosition.x - this.lastPosition.x);
+        int dy = (int)Math.ceil(targetPosition.y - this.lastPosition.y);
+        int dz = (int)Math.ceil(targetPosition.z - this.lastPosition.z);
+ 
+        int steps = dx + dy + dz;
+ 
+        int x = 0; int y = 0; int z = 0;
+        for (int i = 0; i < steps; i++) {
+            // TODO: precompute inverse deltas
+            float ratioX = x / (float)dx;
+            float ratioY = y / (float)dy;
+            float ratioZ = z / (float)dz;
+ 
+            int difX = 0; int difY = 0; int difZ = 0;
+ 
+            // Prioritize the fastest axis in case of percentage tie
+            if (ratioX == ratioY && ratioY == ratioZ) {
+                if (dx > dy && dx > dz) { x++; difX = 1; }
+                else if (dy > dz) { y++; difY = 1; }
+                else { z++; difZ = 1; }
+            }
+            else if (ratioX == ratioY) {
+                if (dx > dy) { x++; difX = 1; }
+                else { y++; difY = 1; }
+            }
+            else if (ratioY == ratioZ) {
+                if (dy > dz) { y++; difY = 1; }
+                else { z++; difZ = 1; }
+            }
+            else if (ratioZ == ratioX) { // TODO: Check if alteration broke it
+                if (dz > dx) { z++; difZ = 1; }
+                else { x++; difX = 1; }
+            }
+ 
+            // Prioritize smallest percentage
+            else if (ratioX < ratioY && ratioX < ratioZ) { x++; difX = 1; }
+            else if (ratioY < ratioZ) { y++; difY = 1; }
+            else { z++; difZ = 1; }
+ 
+            if (difX == 1) {
+                labelLayerCheckYZ:
+                for (int iy = 0; iy <= y; iy++) {
+                    for (int iz = 0; iz <= z; iz++) {
+                        if (checkBlock(x, iy, iz, targetPosition)) {
+                            break labelLayerCheckYZ;
+                        }
+                    }
+                }
+            }
+ 
+            if (difY == 1) {
+                labelLayerCheckXZ:
+                for (int ix = 0; ix <= x; ix++) {
+                    for (int iz = 0; iz <= z; iz++) {
+                        if (checkBlock(ix, y, iz, targetPosition)) {
+                            break labelLayerCheckXZ;
+                        }
+                    }
+                }
+            }
+ 
+            if (difZ == 1) {
+                labelLayerCheckXY:
+                for (int ix = 0; ix <= x; ix++) {
+                    for (int iy = 0; iy <= y; iy++) {
+                        if (checkBlock(ix, iy, z, targetPosition)) {
+                            break labelLayerCheckXY;
+                        }
+                    }
+                }
+            }
+        }
+
+        this.updateRefraction(targetPosition);
+        this.position.set(targetPosition);
     }
 
     @Inject(
