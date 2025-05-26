@@ -34,7 +34,7 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 > ```
 
 ## Dependencies:
-- Puzzle Loader ~~or Cosmic Quilt~~
+- Puzzle Loader or Cosmic Quilt
 - Cosmic Reach Alpha v0.4.9 or newer
 
 ### Build dependencies
