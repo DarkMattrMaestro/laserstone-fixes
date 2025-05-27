@@ -290,7 +290,7 @@ public class EntityLaserProjectileMixin extends Entity {
             return;
         }
         
-        if (LaserstoneFixesSettings.collisionOrderMethod == 2) {
+        else if (LaserstoneFixesSettings.collisionOrderMethod == 2) {
             updateConstraintsProxyWEIGHTED(zone, targetPosition);
             ci.cancel();
             return;
