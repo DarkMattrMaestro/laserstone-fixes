@@ -81,10 +81,11 @@ public class LaserstoneFixesOptionMenu extends GameState {
 
         CRSlider CollisionBlockOrderingSlider = this.createSettingsCREnumSlider(LaserstoneFixesConfig.INSTANCE.collisionOrderMethod, LaserstoneFixesSettings.COLLISION_ORDER_METHOD_ENUM, this.collisionBlockOrderingSliderStr);
 
+        LaserstoneFixesOptionMenu thisObj = this;
         CRButton doneButton = new CRButton(Lang.get("doneButton")) {
             public void onClick() {
                 super.onClick();
-//                this.returnToPrevious();
+                thisObj.returnToPrevious();
             }
         };
 
