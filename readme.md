@@ -1,5 +1,8 @@
+> [!NOTE]
+> Updated to Cosmic Reach Alpha v0.9.17
+
 # Laserstone Fixes
-Laserstone Fixes aims to fix a few quirks and bugs in the current implementation of laserstone.
+Laserstone Fixes aims to fix a few quirks and bugs in the current implementation of laserstone. It does not add new features!
 
 ## Features Summary
 1. Fixes lasers clipping through blocks
@@ -34,19 +37,13 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 > ```
 
 ## Dependencies:
-- Puzzle Loader or Cosmic Quilt
-- Cosmic Reach Alpha v0.4.9 or newer
+- Puzzle Loader ~~or Cosmic Quilt~~ (as of Cosmic Reach v0.9.17, this mod only supports Puzzle)
+- Cosmic Reach Alpha v0.4.9 or newer. The last Cosmic Reach version that has been verified to work with this mod is Alpha v0.9.17.
 
 ### Build dependencies
-- Java >=17. The version must have a decimal (ex. 24.0.1), otherwise you will get an IllegalStateException (specifically: `throw new IllegalStateException("Unable to convert 'java.version' (" + jVersion + ") into a version number!");` from quiltmc). As an example, version 21.0.0 will fail to parse and throw an error.
+- Java >=17 for Cosmic Reach <v0.9.17 or Java >=24 for Cosmic Reach >=v0.9.17. The version must have a decimal (ex. 24.0.1), otherwise you will get an IllegalStateException (specifically: `throw new IllegalStateException("Unable to convert 'java.version' (" + jVersion + ") into a version number!");` from quiltmc). As an example, version 21.0.0 will fail to parse and throw an error.
 
 ## How to Test Client & Server for Puzzle
-- go to the Puzzle Subproject
-- For the Client you can use the `./gradlew :puzzle:runClient` task
-- For the Server  you can use the `./gradlew :puzzle:runServer` task
-
-## How to Test Client & Server for Quilt
-- go to the Quilt Subproject
-- For the Client you can use the `./gradlew :quilt:runClient` task
-- For the Server  you can use the `./gradlew :quilt:runServer` task
+- For the Client you can use the `./gradlew :runClient` task
+- For the Server  you can use the `./gradlew :runServer` task
 
