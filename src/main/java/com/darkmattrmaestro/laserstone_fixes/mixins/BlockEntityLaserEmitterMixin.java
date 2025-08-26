@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.darkmattrmaestro.laserstone_fixes.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,7 +119,7 @@ public class BlockEntityLaserEmitterMixin extends BlockEntity implements IBlockE
         this.shootProjectileNowInDirectionFixed(-xDir, -yDir, -zDir, false);
 
         // Temporary
-        LaserstoneFixes.LOGGER.info("laserList Size: {}", laserList.size());
+        Constants.LOGGER.info("laserList Size: {}", laserList.size());
         for (int i = 0; i < laserList.size(); i++) {
             EntityLaserProjectile projectile = laserList.get(laserList.size() - 1 - i);
 
@@ -153,7 +155,7 @@ public class BlockEntityLaserEmitterMixin extends BlockEntity implements IBlockE
         this.shootProjectileNowInDirection(xDir, yDir, zDir, true);
 
         // Temporary
-        LaserstoneFixes.LOGGER.info("laserList Size: {}", laserList.size());
+        Constants.LOGGER.info("laserList Size: {}", laserList.size());
         for (int i = 0; i < laserList.size(); i++) {
             EntityLaserProjectile projectile = laserList.get(i);
 
@@ -181,7 +183,7 @@ public class BlockEntityLaserEmitterMixin extends BlockEntity implements IBlockE
             at = @At("HEAD")
     )
     private void shootProjectileNowInDirectionMixin(float xDir, float yDir, float zDir, boolean playSound, CallbackInfo ci) {
-        LaserstoneFixes.LOGGER.info("Called: shootProjectileNowInDirection Mixin");
+        Constants.LOGGER.info("Called: shootProjectileNowInDirection Mixin");
         shootProjectileNowInDirectionFixed(xDir, yDir, zDir, playSound);
 
         ci.cancel();

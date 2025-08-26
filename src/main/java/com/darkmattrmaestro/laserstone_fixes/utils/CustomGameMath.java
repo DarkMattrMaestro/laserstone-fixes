@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Segment;
 import com.darkmattrmaestro.laserstone_fixes.LaserstoneFixes;
 
+import com.darkmattrmaestro.laserstone_fixes.Constants;
+
 public class CustomGameMath {
     public static BoundingBox expandAABB(BoundingBox bb, float radius) {
         return new BoundingBox(
@@ -21,7 +23,7 @@ public class CustomGameMath {
      * @return
      */
     public static boolean segmentAABBTest(Segment segment, BoundingBox box) {
-        LaserstoneFixes.LOGGER.info("&&&&&&&&& segmentAABBTest Called!");
+        Constants.LOGGER.info("&&&&&&&&& segmentAABBTest Called!");
 
         float length = segment.len();
         Vector3 dir = new Vector3(
