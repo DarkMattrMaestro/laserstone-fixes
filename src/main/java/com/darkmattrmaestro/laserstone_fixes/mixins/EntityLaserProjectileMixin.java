@@ -200,22 +200,22 @@ public class EntityLaserProjectileMixin extends Entity {
         int maxBx = (int)Math.floor((double)this.tmpEntityBoundingBox.max.x);
         int maxBy = (int)Math.floor((double)this.tmpEntityBoundingBox.max.y);
         int maxBz = (int)Math.floor((double)this.tmpEntityBoundingBox.max.z);
- 
+
         int dx = (int)Math.ceil(targetPosition.x - this.lastPosition.x);
         int dy = (int)Math.ceil(targetPosition.y - this.lastPosition.y);
         int dz = (int)Math.ceil(targetPosition.z - this.lastPosition.z);
- 
+
         int steps = dx + dy + dz;
- 
+
         int x = 0; int y = 0; int z = 0;
         for (int i = 0; i < steps; i++) {
             // TODO: precompute inverse deltas
             float ratioX = x / (float)dx;
             float ratioY = y / (float)dy;
             float ratioZ = z / (float)dz;
- 
+
             int difX = 0; int difY = 0; int difZ = 0;
- 
+
             // Prioritize the fastest axis in case of percentage tie
             if (ratioX == ratioY && ratioY == ratioZ) {
                 if (dx > dy && dx > dz) { x++; difX = 1; }
@@ -234,12 +234,12 @@ public class EntityLaserProjectileMixin extends Entity {
                 if (dz > dx) { z++; difZ = 1; }
                 else { x++; difX = 1; }
             }
- 
+
             // Prioritize smallest percentage
             else if (ratioX < ratioY && ratioX < ratioZ) { x++; difX = 1; }
             else if (ratioY < ratioZ) { y++; difY = 1; }
             else { z++; difZ = 1; }
- 
+
             if (difX == 1) {
                 labelLayerCheckYZ:
                 for (int iy = 0; iy <= y; iy++) {
@@ -250,7 +250,7 @@ public class EntityLaserProjectileMixin extends Entity {
                     }
                 }
             }
- 
+
             if (difY == 1) {
                 labelLayerCheckXZ:
                 for (int ix = 0; ix <= x; ix++) {
@@ -261,7 +261,7 @@ public class EntityLaserProjectileMixin extends Entity {
                     }
                 }
             }
- 
+
             if (difZ == 1) {
                 labelLayerCheckXY:
                 for (int ix = 0; ix <= x; ix++) {
@@ -289,7 +289,7 @@ public class EntityLaserProjectileMixin extends Entity {
             ci.cancel();
             return;
         }
-        
+
         else if (LaserstoneFixesSettings.collisionOrderMethod == 2) {
             updateConstraintsProxyWEIGHTED(zone, targetPosition);
             ci.cancel();
