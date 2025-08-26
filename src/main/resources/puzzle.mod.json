@@ -21,7 +21,7 @@
     "server": true
   },
   "mixins": [
-
+    "laserstone_fixes.mixins.json"
   ],
   "custom": {
     "loom:injected_interfaces": {

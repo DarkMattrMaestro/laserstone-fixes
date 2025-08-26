@@ -4,8 +4,7 @@
   "package": "com.darkmattrmaestro.laserstone_fixes.mixins",
   "compatibilityLevel": "JAVA_24",
   "mixins": [
-    "EntityLaserProjectileMixin",
-    "BlockEntityLaserEmitterMixin"
+    "EntityLaserProjectileMixin"
   ],
   "client": [
   ],
