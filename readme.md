@@ -8,7 +8,7 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 1. Fixes lasers clipping through blocks
 
 > ### 1. Laser Clipping Fix
-> The current implementation (as of Cosmic Reach Alpha-0.4.9) of the laser entity, when preparing to move, checks for block collisions from the furthest negative point in its potential path to the most positive point. See the vanilla implementation:
+> The current implementation (as of Cosmic Reach Alpha-0.4.17) of the laser entity, when preparing to move, checks for block collisions from the furthest negative point in its potential path to the most positive point. See the vanilla implementation:
 > ```Java
 > for(int bx = minBx; bx <= maxBx; ++bx) {
 >   for(int by = minBy; by <= maxBy; ++by) {
