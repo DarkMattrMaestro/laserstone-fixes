@@ -1,5 +1,5 @@
 > [!NOTE]
-> Updated to Cosmic Reach Alpha v0.9.17
+> Updated to Cosmic Reach Alpha v0.4.17
 
 # Laserstone Fixes
 Laserstone Fixes aims to fix a few quirks and bugs in the current implementation of laserstone. It does not add new features!
@@ -37,11 +37,11 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 > ```
 
 ## Dependencies:
-- Puzzle Loader ~~or Cosmic Quilt~~ (as of Cosmic Reach v0.9.17, this mod only supports Puzzle)
-- Cosmic Reach Alpha v0.4.9 or newer. The last Cosmic Reach version that has been verified to work with this mod is Alpha v0.9.17.
+- Puzzle Loader ~~or Cosmic Quilt~~ (as of Cosmic Reach v0.4.17, this mod only supports Puzzle)
+- Cosmic Reach Alpha v0.4.9 or newer. The last Cosmic Reach version that has been verified to work with this mod is Alpha v0.4.17.
 
 ### Build dependencies
-- Java >=17 for Cosmic Reach <v0.9.17 or Java >=24 for Cosmic Reach >=v0.9.17. The version must have a decimal (ex. 24.0.1), otherwise you will get an IllegalStateException (specifically: `throw new IllegalStateException("Unable to convert 'java.version' (" + jVersion + ") into a version number!");` from quiltmc). As an example, version 21.0.0 will fail to parse and throw an error.
+- Java >=17 for Cosmic Reach <v0.4.17 or Java >=24 for Cosmic Reach >=v0.4.17. The version must have a decimal (ex. 24.0.1), otherwise you will get an IllegalStateException (specifically: `throw new IllegalStateException("Unable to convert 'java.version' (" + jVersion + ") into a version number!");` from quiltmc). As an example, version 21.0.0 will fail to parse and throw an error.
 
 ## How to Test Client & Server for Puzzle
 - For the Client you can use the `./gradlew :runClient` task
