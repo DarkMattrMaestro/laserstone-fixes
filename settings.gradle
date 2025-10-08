@@ -1,8 +1,8 @@
 buildscript() {
     repositories {
         maven {
-            name "JitPack"
-            url "https://jitpack.io"
+            name = "JitPack"
+            url = "https://jitpack.io"
         }
         maven {
             name = 'Fabric'
@@ -10,10 +10,10 @@ buildscript() {
         }
         mavenCentral()
         gradlePluginPortal()
-        mavenLocal()
+//        mavenLocal()
     }
     dependencies {
-        classpath "com.gradleup.shadow:shadow-gradle-plugin:8.3.3"
+        classpath "com.gradleup.shadow:shadow-gradle-plugin:9.2.0"
         classpath "com.github.PuzzlesHQ.jigsaw:jigsaw:$jigsaw_gradle_version"
     } //jitpack builds it for you if you do master-SNAPSHOT
 }

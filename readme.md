@@ -44,6 +44,6 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 - Java >=17 for Cosmic Reach <v0.4.17 or Java >=24 for Cosmic Reach >=v0.4.17. The version must have a decimal (ex. 24.0.1), otherwise you will get an IllegalStateException (specifically: `throw new IllegalStateException("Unable to convert 'java.version' (" + jVersion + ") into a version number!");` from quiltmc). As an example, version 21.0.0 will fail to parse and throw an error.
 
 ## How to Test Client & Server for Puzzle
-- For the Client you can use the `./gradlew :runClient` task
+- For the Client you can use the `./gradlew :runClient` task (add `--warning-mode all` for more useful outputs)
 - For the Server  you can use the `./gradlew :runServer` task
 

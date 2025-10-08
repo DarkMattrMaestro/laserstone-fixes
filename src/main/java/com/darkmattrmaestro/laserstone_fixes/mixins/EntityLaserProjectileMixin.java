@@ -1,14 +1,17 @@
 package com.darkmattrmaestro.laserstone_fixes.mixins;
 
+import com.darkmattrmaestro.laserstone_fixes.Constants;
 import com.darkmattrmaestro.laserstone_fixes.configs.LaserstoneFixesSettings;
+import com.darkmattrmaestro.laserstone_fixes.utils.CustomGameMath;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import finalforeach.cosmicreach.blocks.BlockState;
 import finalforeach.cosmicreach.entities.Entity;
-import finalforeach.cosmicreach.entities.EntityLaserProjectile;
+import finalforeach.cosmicreach.entities.projectiles.EntityProjectileLaser;
 import finalforeach.cosmicreach.entities.EntityUniqueId;
 import finalforeach.cosmicreach.util.Axis;
+import finalforeach.cosmicreach.util.GameTag;
 import finalforeach.cosmicreach.world.Zone;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,13 +19,15 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import finalforeach.cosmicreach.entities.CommonEntityTags;
 
 import finalforeach.cosmicreach.util.GameMath;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Segment;
 
-@Mixin(EntityLaserProjectile.class)
+@Mixin(EntityProjectileLaser.class)
 public class EntityLaserProjectileMixin extends Entity {
+    @Shadow public static final GameTag TAG_STOPS_LASERS = GameTag.get("stopsLasers");
     @Shadow public float maxAge;
     @Shadow private transient Segment displacementSegment;
     @Shadow private boolean leftSource;
@@ -37,70 +42,74 @@ public class EntityLaserProjectileMixin extends Entity {
         super(entityTypeId);
     }
 
-////    @Inject(
-////            method = "update",
-////            cancellable = true,
-////            at = @At("HEAD")
-//////            at = @At(
-//////                    value = "INVOKE",
-//////                    target = "Lfinalforeach/cosmicreach/entities/EntityLaserProjectile;onDeath()V", //"Lfinalforeach/cosmicreach/util/GameMath;distanceSegmentBoundingBox(Lcom/badlogic/gdx/math/collision/Segment;com/badlogic/gdx/math/collision/BoundingBox;)F"
-//////                    shift = At.Shift.BY,
-//////                    by = -8
-//////            )
-////    )
-////    private void updateProxy(Zone zone, float deltaTime, CallbackInfo ci) {
-//////        LaserstoneFixes.LOGGER.info("!-!!! distanceSegmentBoundingBoxProxy Called!");
-////
-////        super.update(zone, deltaTime);
-////        if (!(this.age > this.maxAge) && !this.isDead()) {
-////            this.displacementSegment.a.set(this.lastPosition);
-////            this.displacementSegment.b.set(this.position);
-////            this.forEachEntityInNearbyChunks((e) -> {
-////                if (e != this) {
-////                    LaserstoneFixes.LOGGER.info("");
-//////                    LaserstoneFixes.LOGGER.info("%%%% {}", e.entityTypeId);
-////                    if (!this.leftSource && e.uniqueId.equals(this.sourceEntityId)) {
-//////                        LaserstoneFixes.LOGGER.info("   - Not left source");
-////                        return;
-////                    }
-////
-////                    if (e.hasTag(CommonEntityTags.PROJECTILE_IMMUNE)) {
-//////                        LaserstoneFixes.LOGGER.info("   - Target immune");
-////                        return;
-////                    }
-////
-//////                    if (GameMath.distanceSegmentBoundingBox(this.displacementSegment, e.globalBoundingBox) < this.radius) {
-////                    BoundingBox expandedBox = CustomGameMath.expandAABB(e.globalBoundingBox, this.radius);
-////                    if (CustomGameMath.segmentAABBTest(this.displacementSegment, expandedBox)) { // TODO: Add this.radius back in
-//////                        LaserstoneFixes.LOGGER.info("   - Collision!");
-////                        e.hit(this, this.strength);
-////                        this.die(zone);
-////                    }
-////
-//////                    LaserstoneFixes.LOGGER.info("   - No collision");
-////                }
-////
-////            });
-////        } else {
-////            this.onDeath();
-////        }
-////
-//////        LaserstoneFixes.LOGGER.info("DONE!!!");
-////
-////        ci.cancel();
-////    }
-//
+    @Inject(
+            method = "update",
+            cancellable = true,
+            at = @At("HEAD")
+//            at = @At(
+//                    value = "INVOKE",
+//                    target = "Lfinalforeach/cosmicreach/entities/EntityLaserProjectile;onDeath()V", //"Lfinalforeach/cosmicreach/util/GameMath;distanceSegmentBoundingBox(Lcom/badlogic/gdx/math/collision/Segment;com/badlogic/gdx/math/collision/BoundingBox;)F"
+//                    shift = At.Shift.BY,
+//                    by = -8
+//            )
+    )
+    private void updateProxy(Zone zone, float deltaTime, CallbackInfo ci) {
+        Constants.LOGGER.info("!-!!! distanceSegmentBoundingBoxProxy Called!");
+
+        boolean wasAlive = !this.isDead();
+        super.update(zone, deltaTime);
+        if (this.age > this.maxAge || this.isDead()) {
+            this.onDeath();
+            if (!wasAlive) {
+                return;
+            }
+        }
+
+        this.displacementSegment.a.set(this.lastPosition);
+        this.displacementSegment.b.set(this.position);
+        this.forEachEntityInNearbyChunks((e) -> {
+            if (e != this) {
+                Constants.LOGGER.info("");
+//                    LaserstoneFixes.LOGGER.info("%%%% {}", e.entityTypeId);
+                if (!this.leftSource && e.uniqueId.equals(this.sourceEntityId)) {
+//                        LaserstoneFixes.LOGGER.info("   - Not left source");
+                    return;
+                }
+
+                if (e.hasTag(CommonEntityTags.PROJECTILE_IMMUNE)) {
+//                        LaserstoneFixes.LOGGER.info("   - Target immune");
+                    return;
+                }
+
+//                    if (GameMath.distanceSegmentBoundingBox(this.displacementSegment, e.globalBoundingBox) < this.radius) {
+                BoundingBox expandedBox = CustomGameMath.expandAABB(e.globalBoundingBox, this.radius);
+                if (CustomGameMath.segmentAABBTest(this.displacementSegment, expandedBox)) { // TODO: Add this.radius back in
+                    Constants.LOGGER.info("   - Collision!");
+                    e.hit(this, this.strength);
+                    this.die(zone);
+                }
+
+//                    LaserstoneFixes.LOGGER.info("   - No collision");
+            }
+
+        });
+
+//        LaserstoneFixes.LOGGER.info("DONE!!!");
+
+        ci.cancel();
+    }
+
     @Unique
     private boolean checkBlock(int bx, int by, int bz, Vector3 targetPosition) {
         if (bx != this.sourceBlockX || by != this.sourceBlockY || bz != this.sourceBlockZ) {
             BlockState blockAdj = zone.getBlockState(bx, by, bz);
-            if (blockAdj != null && !blockAdj.walkThrough && blockAdj.stopsLasers) {
+            if (blockAdj != null && !blockAdj.walkThrough && (blockAdj.isOpaque || blockAdj.hasTag(TAG_STOPS_LASERS))) {
                 blockAdj.getBoundingBox(this.tmpBlockBoundingBox, bx, by, bz);
                 if (this.tmpBlockBoundingBox.intersects(this.tmpEntityBoundingBox)) {
                     blockAdj.getAllBoundingBoxes(this.tmpBlockBoundingBoxes, bx, by, bz);
                     Array.ArrayIterator<BoundingBox> var13 = this.tmpBlockBoundingBoxes.iterator();
 
-                    while(var13.hasNext()) {
+                    while (var13.hasNext()) {
                         BoundingBox bb = (BoundingBox)var13.next();
                         if (bb.intersects(this.tmpEntityBoundingBox)) {
                             float dist = GameMath.distanceBoundingBoxPoint(bb, this.lastPosition);
@@ -159,15 +168,32 @@ public class EntityLaserProjectileMixin extends Entity {
         int maxBy = (int)Math.floor((double)this.tmpEntityBoundingBox.max.y);
         int maxBz = (int)Math.floor((double)this.tmpEntityBoundingBox.max.z);
 
-        // Axis-Aligned Directions (is axis positive)
-        boolean isPosX = targetPosition.x > this.lastPosition.x;
-        boolean isPosY = targetPosition.y > this.lastPosition.y;
-        boolean isPosZ = targetPosition.z > this.lastPosition.z;
+        // Final's modified axis-aligned steps
+        int bxStart = minBx;
+        int byStart = minBy;
+        int bzStart = minBz;
+        int stepX = 1;
+        int stepY = 1;
+        int stepZ = 1;
+        if (this.lastPosition.x > this.position.x) {
+            bxStart = maxBx;
+            stepX = -1;
+        }
+
+        if (this.lastPosition.y > this.position.y) {
+            byStart = maxBy;
+            stepY = -1;
+        }
+
+        if (this.lastPosition.z > this.position.z) {
+            bzStart = maxBz;
+            stepZ = -1;
+        }
 
         label76:
-        for(int bx = isPosX ? minBx : maxBx; bx >= minBx && bx <= maxBx; bx += isPosX ? 1 : -1) {
-            for(int by = isPosY ? minBy : maxBy; by >= minBy && by <= maxBy; by += isPosY ? 1 : -1) {
-                for(int bz = isPosZ ? minBz : maxBz; bz >= minBz && bz <= maxBz; bz += isPosZ ? 1 : -1) {
+        for(int bx = bxStart; bx >= minBx && bx <= maxBx; bx += stepX) {
+            for(int by = byStart; by >= minBy && by <= maxBy; by += stepY) {
+                for(int bz = bzStart; bz >= minBz && bz <= maxBz; bz += stepZ) {
                     if (checkBlock(bx, by, bz, targetPosition)) {
                         break label76;
                     }
@@ -297,6 +323,14 @@ public class EntityLaserProjectileMixin extends Entity {
         }
 
         // If collisionOrderMethod is 0, pass to vanilla implementation
+    }
+
+    @Inject(
+            method = "update",
+            at = @At("TAIL")
+    )
+    public void update(Zone zone, float deltaTime, CallbackInfo ci) {
+        Constants.LOGGER.warn("LaserEntity @{}", this.position);
     }
 
     ////////////// updateConstraintsProxy //////////////
