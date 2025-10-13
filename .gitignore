@@ -2,6 +2,7 @@
 run/
 
 build/
+old_builds/
 bin/
 
 !gradle/wrapper/gradle-wrapper.jar
