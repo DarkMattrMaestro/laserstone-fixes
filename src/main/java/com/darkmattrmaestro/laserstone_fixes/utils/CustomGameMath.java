@@ -15,6 +15,7 @@ public class CustomGameMath {
                 bb.max.add(radius)
         );
     }
+
     /***
      * Ray-AABB intersection test using the slab method. See <a href="https://tavianator.com/cgit/dimension.git/tree/libdimension/bvh/bvh.c#n196">https://tavianator.com/cgit/dimension.git/tree/libdimension/bvh/bvh.c#n196</a>
      *
@@ -23,7 +24,7 @@ public class CustomGameMath {
      * @return
      */
     public static boolean segmentAABBTest(Segment segment, BoundingBox box) {
-        Constants.LOGGER.info("&&&&&&&&& segmentAABBTest Called!");
+//        Constants.LOGGER.info("&&&&&&&&& segmentAABBTest Called!");
 
         float length = segment.len();
         Vector3 dir = new Vector3(
@@ -56,5 +57,45 @@ public class CustomGameMath {
         tmax = Math.min(tmax, Math.max(tz1, tz2));
 
         return tmax >= Math.max(0.0, tmin) && tmin < segment.len();
+    }
+
+    /***
+     * Ray-AABB intersection distance using a method from Stack Exchange. See <a href="https://gamedev.stackexchange.com/a/18459/197454">https://gamedev.stackexchange.com/a/18459/197454</a>
+     *
+     * @param r
+     * @param box
+     * @return Distance to point of collision, or -1 if no collision occurs
+     */
+    public static double segmentAABBCollisionDist(Ray r, BoundingBox box) {
+        Vector3 dirfrac = new Vector3();
+        // r.dir is unit direction vector of ray
+        dirfrac.x = 1.0f / r.direction.x;
+        dirfrac.y = 1.0f / r.direction.y;
+        dirfrac.z = 1.0f / r.direction.z;
+        // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+        // r.org is origin of ray
+        float t1 = (box.min.x - r.origin.x)*dirfrac.x;
+        float t2 = (box.max.x - r.origin.x)*dirfrac.x;
+        float t3 = (box.min.y - r.origin.y)*dirfrac.y;
+        float t4 = (box.max.y - r.origin.y)*dirfrac.y;
+        float t5 = (box.min.z - r.origin.z)*dirfrac.z;
+        float t6 = (box.max.z - r.origin.z)*dirfrac.z;
+
+        float tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
+        float tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
+
+        // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+        if (tmax < 0)
+        {
+            return -1;
+        }
+
+        // if tmin > tmax, ray doesn't intersect AABB
+        if (tmin > tmax)
+        {
+            return -1;
+        }
+
+        return tmin;
     }
 }

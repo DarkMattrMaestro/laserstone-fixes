@@ -124,7 +124,8 @@ public class ZoneMixin implements Json.Serializable, Disposable {
         this.neutralMobSpawner.tick((Zone) (Object) this);
 
 //        try {
-//            TimeUnit.SECONDS.sleep(2);
+//            TimeUnit.SECONDS.sleep(1);
+//            Constants.LOGGER.info("-tick {}-", this.currentZoneTick);
 //        } catch (Exception e) {}
 
         ++this.currentZoneTick;

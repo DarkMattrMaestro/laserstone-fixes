@@ -7,34 +7,99 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 ## Features Summary
 1. Fixes lasers clipping through blocks
 
-> ### 1. Laser Clipping Fix
-> The current implementation (as of Cosmic Reach Alpha-0.4.9) of the laser entity, when preparing to move, checks for block collisions from the furthest negative point in its potential path to the most positive point. See the vanilla implementation:
-> ```Java
-> for(int bx = minBx; bx <= maxBx; ++bx) {
->   for(int by = minBy; by <= maxBy; ++by) {
->     for(int bz = minBz; bz <= maxBz; ++bz) {
->       /* Check Collision */
->       // ...
+> ### 1. Laser Clipping Fix (second attempt)
+> The current implementation of laser entities (as of Cosmic Reach alpha 0.5.5) has two primary quirks that can lead to
+> lasers clipping through blocks or through entities.
+> 
+> **1. Discrete Steps**
+> 
+> As is common in quite a few games, CR calculates moving entities' collisions in steps (and substeps). For collisions
+> with other entities, the laser entity checks if its target position will intersect with any nearby entity every tick.
+> For collisions with blocks, the laser entity forms substeps such that it only moves by one unit per substep. There is
+> a notable disconnect between the two collision types, wherein the laser can often easily skip over an entity while it
+> would not for a block of a similar bounding box.
+> 
+> Block with small hitboxes tend to be skipped over even with the generated substeps. As such, I opted for the slower
+> but more exact ray collision approach ([see here for the implementation used](https://gamedev.stackexchange.com/a/18459/197454)).
+> It will reduce the need for substeps, and also provide a distance to the collision which can be used in the following
+> step.
+> 
+> **2. Collision-Type Priority**
+> 
+> The laser entity's update function, which runs once per tick, first calls its parent's update function then checks
+> for collisions with entities.
+> <details>
+> <summary>See code</summary>
+> 
+> ```java
+> public void update(Zone zone, float deltaTime) {
+>     boolean wasAlive = !this.isDead();
+>     super.update(zone, deltaTime);
+>     if (this.age > this.maxAge || this.isDead()) {
+>         this.onDeath();
+>         if (!wasAlive) {
+>             return;
+>         }
 >     }
->   }
+> 
+>     this.displacementSegment.a.set(this.lastPosition);
+>     this.displacementSegment.b.set(this.position);
+>     this.forEachEntityInNearbyChunks((e) -> {
+>         if (e != this) {
+>             if (!this.leftSource && e.uniqueId.equals(this.sourceEntityId)) {
+>                 return;
+>             }
+> 
+>             if (e.hasTag(CommonEntityTags.PROJECTILE_IMMUNE)) {
+>                 return;
+>             }
+> 
+>             if (GameMath.distanceSegmentBoundingBox(this.displacementSegment, e.globalBoundingBox) < this.radius) {
+>                 e.hit(this, this.strength);
+>                 this.die(zone);
+>             }
+>         }
+> 
+>     });
 > }
 > ```
+> </details>
 >
-> This mod's fix varies the search order depending on the direction the laser is travelling. See the new implementation:
-> ```Java
-> boolean isPosX = targetPosition.x > this.lastPosition.x;
-> boolean isPosY = targetPosition.y > this.lastPosition.y;
-> boolean isPosZ = targetPosition.z > this.lastPosition.z;
+> The parent's (that is, `Entity`) update function does a few checks, then attempts to update the position of the entity
+> by checking block collisions for a given number of substeps.
+> <details>
+> <summary>See code</summary>
 >
-> for(int bx = isPosX ? minBx : maxBx; bx >= minBx && bx <= maxBx; bx += isPosX ? 1 : -1) {
->   for(int by = isPosY ? minBy : maxBy; by >= minBy && by <= maxBy; by += isPosY ? 1 : -1) {
->     for(int bz = isPosZ ? minBz : maxBz; bz >= minBz && bz <= maxBz; bz += isPosZ ? 1 : -1) {
->       /* Check Collision */
->       // ...
+> ```java
+> float d = this.targetPosition.dst(this.position);
+> if (d < 1.0F) {
+>     this.updateConstraints(zone, this.targetPosition);
+> } else {
+>     this.posDiff.set(this.targetPosition).sub(this.position).scl(1.0F / d);
+>     this.targetPosition.set(this.position);
+>     float floor = (float)Math.floor((double)d);
+> 
+>     for(float l = 0.0F; l < floor; ++l) {
+>         this.targetPosition.add(this.posDiff);
+>         this.updateConstraints(zone, this.targetPosition);
 >     }
->   }
+> 
+>     if (d - floor > 0.0F) {
+>         this.posDiff.scl(d - floor);
+>         this.targetPosition.add(this.posDiff);
+>         this.updateConstraints(zone, this.targetPosition);
+>     }
 > }
 > ```
+> </details>
+> 
+> Since the super call is performed before the entity collision checks, blocks always have priority even when they would
+> otherwise be considered "behind" an entity. To fix this likely unintended behaviour, this fix determines entity or
+> block that has a lesser ray collision distance (using the ray collision algorithm mentioned in the previous step). As
+> a result, the entity collision check is moved into the `updateConstraints` method.
+> 
+> See the `updateConstraintsProxyNearest` method in this repository for further details on the exact working of this
+> fix.
 
 ## Dependencies:
 - Puzzle Loader ~~or Cosmic Quilt~~ (as of Cosmic Reach v0.4.17, this mod only supports Puzzle)

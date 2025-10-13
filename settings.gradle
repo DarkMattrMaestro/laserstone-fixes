@@ -10,16 +10,11 @@ buildscript() {
         }
         mavenCentral()
         gradlePluginPortal()
-//        mavenLocal()
     }
     dependencies {
         classpath "com.gradleup.shadow:shadow-gradle-plugin:9.2.0"
         classpath "com.github.PuzzlesHQ.jigsaw:jigsaw:$jigsaw_gradle_version"
-    } //jitpack builds it for you if you do master-SNAPSHOT
+    }
 }
-
-//include("common")
-//include("quilt")
-//include("puzzle")
 
 rootProject.name = "LaserstoneFixes"

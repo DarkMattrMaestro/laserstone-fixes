@@ -2,18 +2,14 @@ plugins {
     id "java"
     id "jigsaw"
     id 'com.gradleup.shadow'
-    id "maven-publish"
 }
-
-
-
 
 loom {
     splitEnvironmentSourceSets()
     mods {
-        "LaserstoneFixes" {
+        "${id}" {
             sourceSet sourceSets.main
-//            sourceSet sourceSets.client
+            sourceSet sourceSets.client
         }
     }
 //    accessWidenerPath = file("src/main/resources/${id}.manipulator")
@@ -24,18 +20,15 @@ repositories {
     maven {
         url = "https://jitpack.io"
     }
+    maven {
+        url = "https://maven.bawnorton.com/releases"
+    }
 }
 
 dependencies {
     cosmicReach("finalforeach:cosmicreach:${cosmic_reach_version}")
 //    implementation project(":common")
 }
-//tasks.named("compileClientJava") {
-//    source(project(":common").sourceSets.main.allSource)
-//}
-//tasks.named("compileClientJava") {
-//    source(project(":common").sourceSets.main.allJava)
-//}
 
 processResources {
     def resourceTargets = [ "puzzle.mod.json" ]
@@ -43,9 +36,13 @@ processResources {
     // Left item is the name in the target, right is the variable name
     def replaceProperties = [
             "mod_version"     : project.version,
+            "mod_desc"        : desc,
             "mod_group"       : project.group,
             "mod_name"        : rootProject.name,
-            "mod_id"          : id
+            "mod_id"          : id,
+            "cr_version"    : cosmic_reach_version,
+            "puzzle_loader_cosmic"    : puzzle_cosmic_version,
+            "puzzle_loader_core"      : puzzle_core_version
     ]
 
 
@@ -56,25 +53,6 @@ processResources {
     }
 }
 
-
-
-
-
-//applicationDefaultJvmArgs = [
-//        "-Dloader.development=true", // Allows stuff to be found through the classpath
-//        "-Dloader.gameJarPath=" + configurations.cosmicreach.asPath, // Defines path to Cosmic Reach
-//]
-
-//run {
-//    // To run this project in the game, depend on the creation of jar task
-//    dependsOn "jar"
-//
-//    // Change the run directory
-//    File runningDir = new File("run/")
-//    if (!runningDir.exists())
-//        runningDir.mkdirs()
-//    tasks.run.workingDir = runningDir
-//}
 
 
 
