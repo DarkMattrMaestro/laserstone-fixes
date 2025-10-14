@@ -73,7 +73,7 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 > ```java
 > float d = this.targetPosition.dst(this.position);
 > if (d < 1.0F) {
->     this.updateConstraints(zone, this.targetPosition);
+>     this.updateConstraints(zone, this.targetPosition); // <- this line checks block collisions
 > } else {
 >     this.posDiff.set(this.targetPosition).sub(this.position).scl(1.0F / d);
 >     this.targetPosition.set(this.position);
