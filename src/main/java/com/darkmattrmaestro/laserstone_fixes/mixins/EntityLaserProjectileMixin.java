@@ -57,7 +57,7 @@ public class EntityLaserProjectileMixin extends Entity {
             //)
     )
     private void updateProxy(Zone zone, float deltaTime, CallbackInfo ci) {
-//        Constants.LOGGER.info("!-!!! updateProxy Called!");
+        Constants.LOGGER.info("        !-!!! updateProxy Called!        {}", this.position);
 
         boolean wasAlive = !this.isDead();
         super.update(zone, deltaTime);

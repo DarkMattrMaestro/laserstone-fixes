@@ -74,20 +74,44 @@ public class ZoneMixin implements Json.Serializable, Disposable {
     public Array<Entity> getAllEntities() { return null; }
 
     public void update(float deltaTime) {
+        Constants.LOGGER.info("-tick {}-", this.currentZoneTick);
         this.randomTicks.run();
         this.runScheduledTriggers();
 
-//        Constants.LOGGER.warn("Update Tick ran ({}) {}", this.currentZoneTick, Arrays.toString(this.tickingBlockEntities.items));
-//        ArrayUtils.forEach(this.getAllEntities(), (e) -> {
-//            if (e.getClass() != EntityProjectileLaser.class) { return; }
-//            Constants.LOGGER.warn("                                    ---------- {}", e);
-//        });
+        Constants.LOGGER.warn("Update Tick ran ({}) {}", this.currentZoneTick, Arrays.toString(this.tickingBlockEntities.items));
 
         ArrayUtils.forEach((BlockEntity[])this.tickingBlockEntities.begin(), (be) -> be.onTick());
         this.tickingBlockEntities.end();
+
         ArrayUtils.forEach(this.getAllEntities(), (e) -> {
-//            if (e.)
+            if (e.getClass() != EntityProjectileLaser.class) { return; }
+            Constants.LOGGER.warn("                                    ---------- {} {}", e, e.position);
+        });
+
+//        ArrayUtils.forEach(this.getAllEntities(), (e) -> {
+        Array<Entity> foundEntities = new Array<Entity>(this.getAllEntities());
+        int n = 0;
+        for (int j=0; j<foundEntities.size; j++) {
+            Array<Entity> updatedFoundEntities = new Array<Entity>(this.getAllEntities());
+            if (!foundEntities.equals(updatedFoundEntities)) {
+                foundEntities = updatedFoundEntities;
+                j--;
+            }
+            if (foundEntities.get(j).getClass() == EntityProjectileLaser.class) {
+                Constants.LOGGER.info("    size: {}", foundEntities.size);
+                for (int k=0; k<getAllEntities().size; k++) {
+                    if (getAllEntities().get(k).getClass() == EntityProjectileLaser.class) {
+                        Constants.LOGGER.info("                                            {}", getAllEntities().get(k));
+                    }
+                }
+                Constants.LOGGER.info("");
+            }
+            Entity e = getAllEntities().get(j);
+            n++;
+
+            if (e.getClass() == EntityProjectileLaser.class) { Constants.LOGGER.warn("                                    ???------- {} {}   after {}", e, e.position, n); n = 0; }
             e.update((Zone) (Object) this, deltaTime);
+            if (e.getClass() == EntityProjectileLaser.class) { Constants.LOGGER.warn("                                    ???Yes"); }
             if (e.isMob() && !e.hasTag(CommonEntityTags.NO_DESPAWN)) {
                 boolean canDespawn = true;
                 float closestDistance = Float.MAX_VALUE;
@@ -119,14 +143,13 @@ public class ZoneMixin implements Json.Serializable, Disposable {
                 }
             }
 
-        });
+        }//);
         this.hostileMobSpawner.tick((Zone) (Object) this);
         this.neutralMobSpawner.tick((Zone) (Object) this);
 
-//        try {
-//            TimeUnit.SECONDS.sleep(1);
-//            Constants.LOGGER.info("-tick {}-", this.currentZoneTick);
-//        } catch (Exception e) {}
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (Exception e) {}
 
         ++this.currentZoneTick;
     }

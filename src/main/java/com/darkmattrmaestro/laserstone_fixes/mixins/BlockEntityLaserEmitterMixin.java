@@ -126,11 +126,15 @@ public class BlockEntityLaserEmitterMixin extends BlockEntity implements IBlockE
         this.shootProjectileNowInDirection(xDir, yDir, zDir, true);
         this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() + 1);
         this.shootProjectileNowInDirection(xDir, yDir, zDir, false);
-        this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() - 2);
+        this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() + 1);
         this.shootProjectileNowInDirection(xDir, yDir, zDir, false);
-        this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() - 1);
+        this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() + 1);
         this.shootProjectileNowInDirection(xDir, yDir, zDir, false);
-        this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() + 2);
+        this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() + 1);
+        this.shootProjectileNowInDirection(xDir, yDir, zDir, false);
+        this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() + 1);
+        this.shootProjectileNowInDirection(xDir, yDir, zDir, false);
+        this.setGlobalPosition(this.getGlobalX(), this.getGlobalY(), this.getGlobalZ() - 5);
     }
 //
 //    @Shadow
