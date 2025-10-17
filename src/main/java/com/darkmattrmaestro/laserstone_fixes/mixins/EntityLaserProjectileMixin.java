@@ -1,7 +1,6 @@
 package com.darkmattrmaestro.laserstone_fixes.mixins;
 
 import com.badlogic.gdx.math.collision.Ray;
-import com.darkmattrmaestro.laserstone_fixes.configs.LaserstoneFixesSettings;
 import com.darkmattrmaestro.laserstone_fixes.utils.CustomGameMath;
 
 import com.badlogic.gdx.math.Vector3;
@@ -504,11 +503,9 @@ public class EntityLaserProjectileMixin extends Entity {
     private void updateConstraintsProxy(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
 //        Constants.LOGGER.warn("UpdateConstraints Called");
 
-        if (true) {
-            updateConstraintsProxyNearest(zone, targetPosition);
-            ci.cancel();
-            return;
-        }
+        updateConstraintsProxyNearest(zone, targetPosition);
+        ci.cancel();
+        return;
 
 //        if (LaserstoneFixesSettings.collisionOrderMethod == 1) {
 //            updateConstraintsProxyAXIS(zone, targetPosition);
