@@ -1,7 +1,6 @@
 package com.darkmattrmaestro.laserstone_fixes.mixins;
 
 import com.badlogic.gdx.math.collision.Ray;
-import com.darkmattrmaestro.laserstone_fixes.Constants;
 import com.darkmattrmaestro.laserstone_fixes.configs.LaserstoneFixesSettings;
 import com.darkmattrmaestro.laserstone_fixes.utils.CustomGameMath;
 
@@ -57,8 +56,6 @@ public class EntityLaserProjectileMixin extends Entity {
             //)
     )
     private void updateProxy(Zone zone, float deltaTime, CallbackInfo ci) {
-        Constants.LOGGER.info("        !-!!! updateProxy Called!        {}", this.position);
-
         boolean wasAlive = !this.isDead();
         super.update(zone, deltaTime);
         if (this.age > this.maxAge || this.isDead()) {
