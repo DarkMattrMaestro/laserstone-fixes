@@ -6,6 +6,7 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 
 ## Features Summary
 1. Fixes lasers clipping through blocks and entities
+2. Fixes the pseudo-random laser timing offsets
 
 > ### 1. Laser Clipping Fix (second attempt)
 > The current implementation of laser entities (as of Cosmic Reach alpha 0.5.5) has two primary quirks that can lead to
@@ -100,6 +101,43 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 > 
 > See the `updateConstraintsProxyNearest` method in this repository for further details on the exact workings of this
 > fix.
+
+> ### 2. Random Laser Offset Fix
+> In the Zone class, the list of ticking entities is iterated via a for-each loop. However, elements of the list can be
+> removed while iterating, mostly due to self-deletion upon collision. The iterator, in turn, ends up skipping some
+> entities, and leaving their updating to the next tick.
+> 
+> Here is the original section which causes pseudo-random offsets (offsets are not entirely random):
+> <details>
+> <summary>See code</summary>
+>
+> ```java
+> ArrayUtils.forEach(this.getAllEntities(), (e) -> {
+>     e.update(this, deltaTime);
+>     // ...
+> }
+> ```
+> </details>
+>
+> The fix repositions the current index whenever the list of entities is altered while iterating:
+> <details>
+> <summary>See code</summary>
+>
+> ```java
+> Array<Entity> foundEntities = new Array<Entity>(this.getAllEntities());
+> for (int j=0; j<foundEntities.size; j++) {
+>     Array<Entity> updatedFoundEntities = new Array<Entity>(this.getAllEntities());
+>     if (!foundEntities.equals(updatedFoundEntities)) {
+>         foundEntities = updatedFoundEntities;
+>         j--;
+>     }
+>     Entity e = getAllEntities().get(j);
+> 
+>     e.update((Zone) (Object) this, deltaTime);
+>     // ...
+> }
+> ```
+> </details>
 
 ## Dependencies:
 - Puzzle Loader ~~or Cosmic Quilt~~ (as of Cosmic Reach v0.4.17, this mod only supports Puzzle)

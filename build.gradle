@@ -18,9 +18,11 @@ loom {
 repositories {
     mavenCentral()
     maven {
+        name = 'Jitpack'
         url = "https://jitpack.io"
     }
     maven {
+        name = 'MixinSquared'
         url = "https://maven.bawnorton.com/releases"
     }
 }
@@ -53,6 +55,11 @@ processResources {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(24)
+    }
+}
 
 
 
