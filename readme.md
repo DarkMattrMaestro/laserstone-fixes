@@ -103,8 +103,8 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 > fix.
 
 > ### 2. Random Laser Offset Fix
-> In the `update` method of the `Zone` class, the list of ticking entities is iterated via a for-each loop. However,
-> elements of the list can be removed while iterating, mostly due to self-deletion upon collision. Elements of the
+> In the `update` method of the `Zone` class, the array of ticking entities is iterated via a for-each loop. However,
+> elements of the array can be removed while iterating, mostly due to self-deletion upon collision. Elements of the
 > array are shifted left and the iterator, in turn, ends up skipping some entities, and leaving their updating to the
 > next tick.
 > 
