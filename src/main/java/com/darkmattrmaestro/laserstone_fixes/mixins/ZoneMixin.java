@@ -54,18 +54,8 @@ public class ZoneMixin implements Json.Serializable, Disposable {
         ArrayUtils.forEach((BlockEntity[])this.tickingBlockEntities.begin(), (be) -> be.onTick());
         this.tickingBlockEntities.end();
 
-        // Ensure the iterator does not skip over any entities, in the case that they remove themselves.
-
-//        ArrayUtils.forEach(this.getAllEntities(), (e) -> {
-        Array<Entity> foundEntities = new Array<Entity>(this.getAllEntities());
-        for (int j=0; j<foundEntities.size; j++) {
-            Array<Entity> updatedFoundEntities = new Array<Entity>(this.getAllEntities());
-            if (!foundEntities.equals(updatedFoundEntities)) {
-                foundEntities = updatedFoundEntities;
-                j--;
-            }
-            Entity e = getAllEntities().get(j);
-
+        // Iterate over copied array to avoid skipping over any entities.
+        ArrayUtils.forEach(this.getAllEntities().toArray(Entity.class), (Entity e) -> {
             e.update((Zone) (Object) this, deltaTime);
             if (e.isMob() && !e.hasTag(CommonEntityTags.NO_DESPAWN)) {
                 boolean canDespawn = true;
@@ -98,7 +88,7 @@ public class ZoneMixin implements Json.Serializable, Disposable {
                 }
             }
 
-        }//);
+        });
         this.hostileMobSpawner.tick((Zone) (Object) this);
         this.neutralMobSpawner.tick((Zone) (Object) this);
 

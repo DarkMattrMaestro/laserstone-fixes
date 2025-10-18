@@ -103,9 +103,10 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 > fix.
 
 > ### 2. Random Laser Offset Fix
-> In the Zone class, the list of ticking entities is iterated via a for-each loop. However, elements of the list can be
-> removed while iterating, mostly due to self-deletion upon collision. The iterator, in turn, ends up skipping some
-> entities, and leaving their updating to the next tick.
+> In the `update` method of the `Zone` class, the list of ticking entities is iterated via a for-each loop. However,
+> elements of the list can be removed while iterating, mostly due to self-deletion upon collision. Elements of the
+> array are shifted left and the iterator, in turn, ends up skipping some entities, and leaving their updating to the
+> next tick.
 > 
 > Here is the original section which causes pseudo-random offsets (offsets are not entirely random):
 > <details>
@@ -113,27 +114,18 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 >
 > ```java
 > ArrayUtils.forEach(this.getAllEntities(), (e) -> {
->     e.update(this, deltaTime);
 >     // ...
 > }
 > ```
 > </details>
 >
-> The fix repositions the current index whenever the list of entities is altered while iterating:
+> The fix creates a copy of the array so that entities in the array can't be removed while iterating. Note that
+> `ArrayUtils.forEach()` already checks for null values in the array, so deleted objects are not a worry.
 > <details>
 > <summary>See code</summary>
 >
 > ```java
-> Array<Entity> foundEntities = new Array<Entity>(this.getAllEntities());
-> for (int j=0; j<foundEntities.size; j++) {
->     Array<Entity> updatedFoundEntities = new Array<Entity>(this.getAllEntities());
->     if (!foundEntities.equals(updatedFoundEntities)) {
->         foundEntities = updatedFoundEntities;
->         j--;
->     }
->     Entity e = getAllEntities().get(j);
-> 
->     e.update((Zone) (Object) this, deltaTime);
+> ArrayUtils.forEach(this.getAllEntities().toArray(Entity.class), (Entity e) -> {
 >     // ...
 > }
 > ```

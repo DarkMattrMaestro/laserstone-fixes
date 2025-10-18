@@ -97,55 +97,55 @@ public class EntityLaserProjectileMixin extends Entity {
         ci.cancel();
     }
 
-    @Unique
-    private boolean checkBlock(int bx, int by, int bz, Vector3 targetPosition) {
-        if (bx != this.sourceBlockX || by != this.sourceBlockY || bz != this.sourceBlockZ) {
-            BlockState blockAdj = zone.getBlockState(bx, by, bz);
-            if (blockAdj != null && !blockAdj.walkThrough && (blockAdj.isOpaque || blockAdj.hasTag(TAG_STOPS_LASERS))) {
-                blockAdj.getBoundingBox(this.tmpBlockBoundingBox, bx, by, bz);
-                if (this.tmpBlockBoundingBox.intersects(this.tmpEntityBoundingBox)) {
-                    blockAdj.getAllBoundingBoxes(this.tmpBlockBoundingBoxes, bx, by, bz);
-                    Array.ArrayIterator<BoundingBox> var13 = this.tmpBlockBoundingBoxes.iterator();
-
-                    while (var13.hasNext()) {
-                        BoundingBox bb = (BoundingBox)var13.next();
-                        if (bb.intersects(this.tmpEntityBoundingBox)) {
-                            float dist = GameMath.distanceBoundingBoxPoint(bb, this.lastPosition);
-                            float len = this.lastPosition.dst(targetPosition);
-                            if (len == 0.0F || dist == 0.0F) {
-                                return true;
-                            }
-
-                            if (dist > this.radius) {
-                                dist -= this.radius;
-                            }
-
-                            float ratio = dist / len;
-                            float oldTargetX = targetPosition.x;
-                            float oldTargetY = targetPosition.y;
-                            float oldTargetZ = targetPosition.z;
-                            targetPosition.x = this.lastPosition.x + ratio * (targetPosition.x - this.lastPosition.x);
-                            targetPosition.y = this.lastPosition.y + ratio * (targetPosition.y - this.lastPosition.y);
-                            targetPosition.z = this.lastPosition.z + ratio * (targetPosition.z - this.lastPosition.z);
-                            this.onCollideWithBlock((Axis)null, blockAdj, targetPosition, bx, by, bz);
-                            if (this.isDead()) {
-                                this.tmpEntityBoundingBox.set(this.localBoundingBox);
-                                this.tmpEntityBoundingBox.min.add(targetPosition);
-                                this.tmpEntityBoundingBox.max.add(targetPosition);
-                                this.tmpEntityBoundingBox.update();
-                                return true;
-                            }
-
-                            targetPosition.set(oldTargetX, oldTargetY, oldTargetZ);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
+//    @Unique
+//    private boolean checkBlock(int bx, int by, int bz, Vector3 targetPosition) {
+//        if (bx != this.sourceBlockX || by != this.sourceBlockY || bz != this.sourceBlockZ) {
+//            BlockState blockAdj = zone.getBlockState(bx, by, bz);
+//            if (blockAdj != null && !blockAdj.walkThrough && (blockAdj.isOpaque || blockAdj.hasTag(TAG_STOPS_LASERS))) {
+//                blockAdj.getBoundingBox(this.tmpBlockBoundingBox, bx, by, bz);
+//                if (this.tmpBlockBoundingBox.intersects(this.tmpEntityBoundingBox)) {
+//                    blockAdj.getAllBoundingBoxes(this.tmpBlockBoundingBoxes, bx, by, bz);
+//                    Array.ArrayIterator<BoundingBox> var13 = this.tmpBlockBoundingBoxes.iterator();
+//
+//                    while (var13.hasNext()) {
+//                        BoundingBox bb = (BoundingBox)var13.next();
+//                        if (bb.intersects(this.tmpEntityBoundingBox)) {
+//                            float dist = GameMath.distanceBoundingBoxPoint(bb, this.lastPosition);
+//                            float len = this.lastPosition.dst(targetPosition);
+//                            if (len == 0.0F || dist == 0.0F) {
+//                                return true;
+//                            }
+//
+//                            if (dist > this.radius) {
+//                                dist -= this.radius;
+//                            }
+//
+//                            float ratio = dist / len;
+//                            float oldTargetX = targetPosition.x;
+//                            float oldTargetY = targetPosition.y;
+//                            float oldTargetZ = targetPosition.z;
+//                            targetPosition.x = this.lastPosition.x + ratio * (targetPosition.x - this.lastPosition.x);
+//                            targetPosition.y = this.lastPosition.y + ratio * (targetPosition.y - this.lastPosition.y);
+//                            targetPosition.z = this.lastPosition.z + ratio * (targetPosition.z - this.lastPosition.z);
+//                            this.onCollideWithBlock((Axis)null, blockAdj, targetPosition, bx, by, bz);
+//                            if (this.isDead()) {
+//                                this.tmpEntityBoundingBox.set(this.localBoundingBox);
+//                                this.tmpEntityBoundingBox.min.add(targetPosition);
+//                                this.tmpEntityBoundingBox.max.add(targetPosition);
+//                                this.tmpEntityBoundingBox.update();
+//                                return true;
+//                            }
+//
+//                            targetPosition.set(oldTargetX, oldTargetY, oldTargetZ);
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        return false;
+//    }
 
     // //////////////////////////////////////////////////
     // //////////// updateConstraintsProxy //////////////
@@ -180,14 +180,11 @@ public class EntityLaserProjectileMixin extends Entity {
 
         this.forEachEntityInNearbyChunks((e) -> {
             if (e != this) {
-//                LaserstoneFixes.LOGGER.info("%%%% {}", e.entityTypeId);
                 if (!this.leftSource && e.uniqueId.equals(this.sourceEntityId)) {
-//                    LaserstoneFixes.LOGGER.info("   - Not left source");
                     return;
                 }
 
                 if (e.hasTag(CommonEntityTags.PROJECTILE_IMMUNE)) {
-//                    LaserstoneFixes.LOGGER.info("   - Target immune");
                     return;
                 }
 
@@ -198,11 +195,6 @@ public class EntityLaserProjectileMixin extends Entity {
                     nearestCollisionDist.set(collisionDistance);
                     nearestEntity.set(e);
                 }
-//                if (CustomGameMath.segmentAABBTest(this.displacementSegment, expandedBox)) { // TODO: Add this.radius back in
-//                    Constants.LOGGER.info("   - Collision!");
-//                    e.hit(this, this.strength);
-//                    this.die(zone);
-//                }
             }
         });
 
@@ -278,8 +270,6 @@ public class EntityLaserProjectileMixin extends Entity {
             if (nearestBlock != null) {
                 // Process block collision
 
-//                Constants.LOGGER.info("Block {}", nearestBlock);
-
                 float oldTargetX = targetPosition.x;
                 float oldTargetY = targetPosition.y;
                 float oldTargetZ = targetPosition.z;
@@ -295,11 +285,8 @@ public class EntityLaserProjectileMixin extends Entity {
                 } else {
                     targetPosition.set(oldTargetX, oldTargetY, oldTargetZ);
                 }
-
             } else if (nearestEntity.get() != null) {
                 // Process entity collision
-
-//                Constants.LOGGER.info("Entity {}", nearestEntity.get());
 
                 nearestEntity.get().hit(this, this.strength);
                 this.die(zone);
@@ -307,8 +294,6 @@ public class EntityLaserProjectileMixin extends Entity {
                 // No collision occurs
             }
         }
-
-//        this.die(zone);
 
         this.updateRefraction(targetPosition);
         this.position.set(targetPosition);
@@ -501,34 +486,9 @@ public class EntityLaserProjectileMixin extends Entity {
             at = @At("HEAD")
     )
     private void updateConstraintsProxy(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
-//        Constants.LOGGER.warn("UpdateConstraints Called");
-
         updateConstraintsProxyNearest(zone, targetPosition);
         ci.cancel();
-        return;
-
-//        if (LaserstoneFixesSettings.collisionOrderMethod == 1) {
-//            updateConstraintsProxyAXIS(zone, targetPosition);
-//            ci.cancel();
-//            return;
-//        }
-//
-//        else if (LaserstoneFixesSettings.collisionOrderMethod == 2) {
-//            updateConstraintsProxyWEIGHTED(zone, targetPosition);
-//            ci.cancel();
-//            return;
-//        }
-
-        // If collisionOrderMethod is 0, pass to vanilla implementation
     }
-
-//    @Inject(
-//            method = "update",
-//            at = @At("TAIL")
-//    )
-//    public void update(Zone zone, float deltaTime, CallbackInfo ci) {
-//        Constants.LOGGER.warn("LaserEntity @{}", this.position);
-//    }
 
     // //////////// updateConstraintsProxy //////////////
     // //////////////////////////////////////////////////
