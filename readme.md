@@ -1,5 +1,5 @@
 > [!NOTE]
-> Updated to Cosmic Reach Alpha v0.5.5
+> Updated to Cosmic Reach Alpha v0.5.7
 
 # Laserstone Fixes
 Laserstone Fixes aims to fix a few quirks and bugs in the current implementation of laserstone. It does not add new features!
@@ -9,7 +9,7 @@ Laserstone Fixes aims to fix a few quirks and bugs in the current implementation
 2. Fixes the pseudo-random laser timing offsets
 
 > ### 1. Laser Clipping Fix (second attempt)
-> The current implementation of laser entities (as of Cosmic Reach alpha 0.5.5) has two primary quirks that can lead to
+> The current implementation of laser entities (as of Cosmic Reach alpha 0.5.7) has two primary quirks that can lead to
 > lasers clipping through blocks or through entities.
 > 
 > **1. Discrete Steps**
