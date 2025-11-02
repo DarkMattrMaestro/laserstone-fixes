@@ -1,6 +1,7 @@
 package com.darkmattrmaestro.laserstone_fixes.mixins;
 
 import com.badlogic.gdx.math.collision.Ray;
+import com.darkmattrmaestro.laserstone_fixes.Constants;
 import com.darkmattrmaestro.laserstone_fixes.utils.CustomGameMath;
 
 import com.badlogic.gdx.math.Vector3;
@@ -200,12 +201,12 @@ public class EntityLaserProjectileMixin extends Entity {
 
         // Blocks
 
-        int minBx = (int) Math.floor(Math.min(this.lastPosition.x, targetPosition.x));
-        int minBy = (int) Math.floor(Math.min(this.lastPosition.y, targetPosition.y));
-        int minBz = (int) Math.floor(Math.min(this.lastPosition.z, targetPosition.z));
-        int maxBx = (int) Math.ceil(Math.max(this.lastPosition.x, targetPosition.x));
-        int maxBy = (int) Math.ceil(Math.max(this.lastPosition.y, targetPosition.y));
-        int maxBz = (int) Math.ceil(Math.max(this.lastPosition.z, targetPosition.z));
+        int minBx = (int) Math.floor(Math.min(this.lastPosition.x, targetPosition.x) - this.radius);
+        int minBy = (int) Math.floor(Math.min(this.lastPosition.y, targetPosition.y) - this.radius);
+        int minBz = (int) Math.floor(Math.min(this.lastPosition.z, targetPosition.z) - this.radius);
+        int maxBx = (int) Math.ceil(Math.max(this.lastPosition.x, targetPosition.x) + this.radius);
+        int maxBy = (int) Math.ceil(Math.max(this.lastPosition.y, targetPosition.y) + this.radius);
+        int maxBz = (int) Math.ceil(Math.max(this.lastPosition.z, targetPosition.z) + this.radius);
 
         // Final's modified axis-aligned steps
         int bxStart = minBx;
@@ -236,6 +237,7 @@ public class EntityLaserProjectileMixin extends Entity {
 
                     // Check for collisions with a block
                     if (bx != this.sourceBlockX || by != this.sourceBlockY || bz != this.sourceBlockZ) {
+
                         BlockState blockAdj = zone.getBlockState(bx, by, bz);
                         if (blockAdj != null && !blockAdj.walkThrough && (blockAdj.isOpaque || blockAdj.hasTag(TAG_STOPS_LASERS))) {
                             // Get main AABB of block and check for collision
@@ -243,6 +245,10 @@ public class EntityLaserProjectileMixin extends Entity {
                             blockAdj.getBoundingBox(mainAABB, bx, by, bz);
                             BoundingBox expandedMainAABB = CustomGameMath.expandAABB(mainAABB, this.radius);
                             double mainCollisionDistance = CustomGameMath.segmentAABBCollisionDist(r, expandedMainAABB);
+
+                            Vector3 tempOutVec = new Vector3();
+                            r.getEndPoint(tempOutVec, (float)mainCollisionDistance);
+
                             if (mainCollisionDistance != -1 && mainCollisionDistance < nearestCollisionDist.get()) {
                                 // Get sub AABBs and check individually for collisions
                                 com.badlogic.gdx.utils.Array<com.badlogic.gdx.math.collision.BoundingBox> subAABBs = new Array<>();
