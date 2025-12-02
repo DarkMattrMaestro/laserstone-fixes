@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_24",
   "mixins": [
     "EntityLaserProjectileMixin",
-    "ZoneMixin"
+    "ZoneMixin",
+    "BlockEntityLaserEmitterMixin"
   ],
   "injectors": {
     "defaultRequire": 1

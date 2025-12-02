@@ -1,15 +1,21 @@
 package com.darkmattrmaestro.laserstone_fixes.mixins;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.collision.Ray;
 import com.darkmattrmaestro.laserstone_fixes.Constants;
 import com.darkmattrmaestro.laserstone_fixes.utils.CustomGameMath;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import finalforeach.cosmicreach.blocks.BlockPosition;
 import finalforeach.cosmicreach.blocks.BlockState;
+import finalforeach.cosmicreach.blocks.blockentities.BlockEntity;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.entities.projectiles.EntityProjectileLaser;
 import finalforeach.cosmicreach.entities.EntityUniqueId;
+import finalforeach.cosmicreach.gameevents.blockevents.BlockEventTrigger;
+import finalforeach.cosmicreach.gameevents.blockevents.LaserBlockEventArgs;
+import finalforeach.cosmicreach.savelib.crbin.CRBSerialized;
 import finalforeach.cosmicreach.util.Axis;
 import finalforeach.cosmicreach.util.GameTag;
 import finalforeach.cosmicreach.world.Zone;
@@ -25,6 +31,7 @@ import finalforeach.cosmicreach.util.GameMath;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Segment;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Mixin(EntityProjectileLaser.class)
@@ -39,6 +46,8 @@ public class EntityLaserProjectileMixin extends Entity {
     @Shadow public int sourceBlockX;
     @Shadow public int sourceBlockY;
     @Shadow public int sourceBlockZ;
+    @Shadow @CRBSerialized
+    private Color laserColor;
 
     public EntityLaserProjectileMixin(String entityTypeId) {
         super(entityTypeId);
@@ -282,7 +291,9 @@ public class EntityLaserProjectileMixin extends Entity {
                 r.getEndPoint(targetPosition, nearestCollisionDist.get().floatValue()); // Set targetPosition to the surface collision point
 
                 BlockState blockAdj = zone.getBlockState(nearestBlock);
+//                Constants.LOGGER.warn("isDead? {}", this.isDead());
                 this.onCollideWithBlock((Axis)null, blockAdj, targetPosition, (int) nearestBlock.x, (int) nearestBlock.y, (int) nearestBlock.z);
+//                Constants.LOGGER.warn("{}, target({}), block({} {} {}) Collided with {} at {} {} {}", this.isDead() ? "(Dead)" : "(Alive)", targetPosition, (((int) nearestBlock.x) + 0.5F), (((int) nearestBlock.y) + 0.5F), (((int) nearestBlock.z) + 0.5F), blockAdj, (int) nearestBlock.x, (int) nearestBlock.y, (int) nearestBlock.z);
                 if (this.isDead()) {
                     this.tmpEntityBoundingBox.set(this.localBoundingBox);
                     this.tmpEntityBoundingBox.min.add(targetPosition);
@@ -486,6 +497,32 @@ public class EntityLaserProjectileMixin extends Entity {
 //        this.position.set(targetPosition);
 //    }
 
+    @Inject(method = "onCollideWithBlock", at = @At(value = "HEAD"))
+    public void onCollideWithBlock(Axis axis, BlockState block, Vector3 targetPosition, int bx, int by, int bz, CallbackInfo ci) {
+        LaserBlockEventArgs args = new LaserBlockEventArgs(this.laserColor);
+        args.blockPos = BlockPosition.ofGlobal(this.zone, bx, by, bz);
+        args.srcBlockState = block;
+        args.zone = this.zone;
+        args.srcPlayer = null;
+        BlockEventTrigger[] t = block.getTrigger("onLaserHit");
+        Constants.LOGGER.error("Collided at {} {} {} with {} noting {} && {}", bx, by, bz, block, !this.isDead(), !(this.getPendingDamage() >= this.hitpoints));
+        if (this.isDead() || (this.getPendingDamage() >= this.hitpoints)) {
+            return;
+        }
+        if (t != null) {
+            Constants.LOGGER.error("t: {}", t);
+            for (BlockEventTrigger ti : t) {
+                Constants.LOGGER.error("   - {}", ti);
+            }
+        } else {
+            Constants.LOGGER.error("t is null");
+        }
+            if (t != null) {
+                args.run(t);
+                args.runScheduledTriggers();
+            }
+    }
+
     @Inject(
             method = "updateConstraints",
             cancellable = true,
@@ -494,6 +531,12 @@ public class EntityLaserProjectileMixin extends Entity {
     private void updateConstraintsProxy(Zone zone, Vector3 targetPosition, CallbackInfo ci) {
         updateConstraintsProxyNearest(zone, targetPosition);
         ci.cancel();
+    }
+
+
+    @Inject(method = "<init>(Lfinalforeach/cosmicreach/blocks/blockentities/BlockEntity;)V", at = @At(value = "TAIL"))
+    public void EntityProjectileLaser(BlockEntity blockEntity, CallbackInfo ci) {
+        Constants.LOGGER.warn("   - Created laser at {} {} {}", blockEntity.getGlobalX(), blockEntity.getGlobalY(), blockEntity.getGlobalZ());
     }
 
     // //////////// updateConstraintsProxy //////////////

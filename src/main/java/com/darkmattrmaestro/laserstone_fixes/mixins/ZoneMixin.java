@@ -1,24 +1,30 @@
 package com.darkmattrmaestro.laserstone_fixes.mixins;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
 import com.darkmattrmaestro.laserstone_fixes.Constants;
 import finalforeach.cosmicreach.RandomTicks;
 import finalforeach.cosmicreach.blocks.blockentities.BlockEntity;
+import finalforeach.cosmicreach.chat.Chat;
+import finalforeach.cosmicreach.chat.commands.Command;
 import finalforeach.cosmicreach.gameevents.blockevents.ScheduledBlockTrigger;
 import finalforeach.cosmicreach.entities.*;
 import finalforeach.cosmicreach.entities.player.Player;
+import finalforeach.cosmicreach.networking.packets.CommandPacket;
 import finalforeach.cosmicreach.rendering.IRenderable;
 import finalforeach.cosmicreach.settings.DifficultySettings;
+import finalforeach.cosmicreach.singletons.GameSingletonPlayers;
+import finalforeach.cosmicreach.singletons.GameSingletons;
 import finalforeach.cosmicreach.util.ArrayUtils;
 import finalforeach.cosmicreach.world.*;
 import finalforeach.cosmicreach.worldgen.ZoneGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.PriorityQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Mixin(Zone.class)
@@ -50,12 +56,31 @@ public class ZoneMixin implements Json.Serializable, Disposable {
     @Shadow
     public Array<Entity> getAllEntities() { return null; }
 
+    @Unique private boolean didPause = false; // TODO: Remove
+
     public void update(float deltaTime) {
+        Constants.LOGGER.warn("  ---{}---", this.currentZoneTick);
+
         this.randomTicks.run();
         this.runScheduledTriggers();
 
         ArrayUtils.forEach((BlockEntity[])this.tickingBlockEntities.begin(), (be) -> be.onTick());
         this.tickingBlockEntities.end();
+
+        AtomicInteger total = new AtomicInteger();
+        ArrayUtils.forEach(this.getAllEntities().toArray(Entity.class), (Entity e) -> {
+            if (!"base:laser_projectile".equals(e.entityTypeId)) {
+                return;
+            }
+            total.getAndIncrement();
+        });
+        double lo = Math.log(total.get()) / Math.log(2);
+//        if (lo % 1 != 0 && lo != Double.NEGATIVE_INFINITY && lo != Double.POSITIVE_INFINITY && !didPause) {
+//            Command.triggerCommand(Chat.MAIN_CLIENT_CHAT, GameSingletons.client().getAccount(), new String[]{"tick", "freeze"});
+//            didPause = true;
+//            return;
+//        }
+        Constants.LOGGER.warn("Lasers: {}", total.get());
 
         // Iterate over copied array to avoid skipping over any entities.
         ArrayUtils.forEach(this.getAllEntities().toArray(Entity.class), (Entity e) -> {
@@ -94,10 +119,6 @@ public class ZoneMixin implements Json.Serializable, Disposable {
         });
         this.hostileMobSpawner.tick((Zone) (Object) this);
         this.neutralMobSpawner.tick((Zone) (Object) this);
-
-//        try {
-//            TimeUnit.SECONDS.sleep(1);
-//        } catch (Exception e) {}
 
         ++this.currentZoneTick;
     }
