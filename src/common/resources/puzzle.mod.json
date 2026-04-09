@@ -1,0 +1,31 @@
+{
+  "formatVersion": 3,
+  "id": "${p_id}",
+  "version": "${p_version}",
+  "display_name": "Photonic Fixes",
+  "name": "Photonic Fixes",
+  "description": "${p_desc}",
+  "authors": [
+    "DarkMattrMaestro"
+  ],
+  "meta": {
+    "icon": "${p_id}:icons/icon.png"
+  },
+  "entrypoints": {
+    "init": [
+      "com.darkmattrmaestro.photonic_fixes.PhotonicFixes"
+    ]
+  },
+  "depends": {
+    "cosmic-reach": ">=${cosmic_reach_version}",
+    "puzzle-loader-cosmic": ">=${puzzle_loader_cosmic_version}",
+    "puzzle-loader-core": ">=${puzzle_loader_core_version}"
+  },
+  "allowedSides": {
+    "client": true,
+    "server": true
+  },
+  "mixins": [
+    "photonic_fixes.mixins.json"
+  ]
+}

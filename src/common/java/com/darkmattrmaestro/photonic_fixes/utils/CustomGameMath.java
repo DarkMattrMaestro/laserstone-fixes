@@ -1,12 +1,12 @@
-package com.darkmattrmaestro.laserstone_fixes.utils;
+package com.darkmattrmaestro.photonic_fixes.utils;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Segment;
-import com.darkmattrmaestro.laserstone_fixes.LaserstoneFixes;
+import com.darkmattrmaestro.photonic_fixes.PhotonicFixes;
 
-import com.darkmattrmaestro.laserstone_fixes.Constants;
+import com.darkmattrmaestro.photonic_fixes.Constants;
 
 public class CustomGameMath {
     public static BoundingBox expandAABB(BoundingBox bb, float radius) {

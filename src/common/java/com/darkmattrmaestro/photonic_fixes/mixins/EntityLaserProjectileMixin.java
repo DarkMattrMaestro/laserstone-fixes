@@ -1,8 +1,8 @@
-package com.darkmattrmaestro.laserstone_fixes.mixins;
+package com.darkmattrmaestro.photonic_fixes.mixins;
 
 import com.badlogic.gdx.math.collision.Ray;
-import com.darkmattrmaestro.laserstone_fixes.Constants;
-import com.darkmattrmaestro.laserstone_fixes.utils.CustomGameMath;
+import com.darkmattrmaestro.photonic_fixes.Constants;
+import com.darkmattrmaestro.photonic_fixes.utils.CustomGameMath;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;

@@ -1,4 +1,4 @@
-//package com.darkmattrmaestro.laserstone_fixes.mixins;
+//package com.darkmattrmaestro.photonic_fixes.mixins;
 //
 //import com.badlogic.gdx.Gdx;
 //import com.badlogic.gdx.graphics.Camera;
@@ -9,7 +9,7 @@
 //import com.badlogic.gdx.math.Vector3;
 //import com.badlogic.gdx.math.collision.BoundingBox;
 //import com.badlogic.gdx.utils.Array;
-//import com.darkmattrmaestro.laserstone_fixes.Constants;
+//import com.darkmattrmaestro.photonic_fixes.Constants;
 //import finalforeach.cosmicreach.EntityPathfinder;
 //import finalforeach.cosmicreach.PathfindRequest;
 //import finalforeach.cosmicreach.TickRunner;

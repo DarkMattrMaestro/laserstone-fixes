@@ -1,8 +1,8 @@
 > [!NOTE]
 > Updated to Cosmic Reach Alpha v0.5.5
 
-# Laserstone Fixes
-Laserstone Fixes aims to fix a few quirks and bugs in the current implementation of laserstone. It does not add new features!
+# Photonic Fixes (renamed from Laserstone Fixes)
+Photonic Fixes aims to fix a few quirks and bugs in the current implementation of photonics in CR. It does not add new features!
 
 ## Features Summary
 1. Fixes lasers clipping through blocks and entities

@@ -1,9 +1,9 @@
-package com.darkmattrmaestro.laserstone_fixes.mixins;
+package com.darkmattrmaestro.photonic_fixes.mixins;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
-import com.darkmattrmaestro.laserstone_fixes.Constants;
+import com.darkmattrmaestro.photonic_fixes.Constants;
 import finalforeach.cosmicreach.RandomTicks;
 import finalforeach.cosmicreach.blocks.blockentities.BlockEntity;
 import finalforeach.cosmicreach.gameevents.blockevents.ScheduledBlockTrigger;
