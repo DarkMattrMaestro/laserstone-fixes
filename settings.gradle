@@ -1,20 +1,19 @@
-buildscript() {
+buildscript {
     repositories {
         maven {
             name = "JitPack"
             url = "https://jitpack.io"
         }
         maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
+            name = "Puzzles Releases"
+            url = "https://maven.puzzleshq.dev/releases/"
         }
         mavenCentral()
         gradlePluginPortal()
     }
     dependencies {
-        classpath "com.gradleup.shadow:shadow-gradle-plugin:8.3.3"
-        classpath "com.github.PuzzlesHQ.jigsaw:jigsaw:$jigsaw_gradle_version"
+        classpath("dev.puzzleshq:jigsaw-suite:$puzzle_jigsaw_suite")
     }
 }
 
-rootProject.name = "LaserstoneFixes"
+rootProject.name = 'PhotonicFixes'
