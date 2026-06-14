@@ -13,7 +13,7 @@ Photonic Fixes aims to fix a few quirks and bugs in the current implementation o
 > > This fix is temporarily disabled for the current version of the mod (Photonic Fixes 0.1.7) as it will require a
 > > substantial rewrite.
 > 
-> The current implementation of laser entities (as of Cosmic Reach alpha 0.5.5) has two primary quirks that can lead to
+> The current implementation of laser entities (as of Cosmic Reach alpha 0.5.7) has two primary quirks that can lead to
 > lasers clipping through blocks or through entities.
 > 
 > **1. Discrete Steps**
