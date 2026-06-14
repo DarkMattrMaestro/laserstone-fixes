@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'jigsaw-cosmic-reach'
+    id 'maven-publish'
 }
 
 group = p_group
@@ -11,7 +12,7 @@ jigsawGame {
 }
 
 jigsawAccess {
-    addManipulators(file("$projectDir/src/common/resources/${p_id}.manipulator"))
+//    addManipulators(file("$projectDir/src/common/resources/${p_id}.manipulator"))
 }
 
 jigsawInject {
@@ -56,13 +57,3 @@ wrapper {
     gradleVersion = "8.14"
     distributionType = Wrapper.DistributionType.ALL
 }
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
-    }
-}
-
-
-
-

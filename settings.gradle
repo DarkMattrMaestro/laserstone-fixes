@@ -1,4 +1,4 @@
-buildscript() {
+buildscript {
     repositories {
         maven {
             name = "JitPack"
@@ -9,7 +9,6 @@ buildscript() {
             url = "https://maven.puzzleshq.dev/releases/"
         }
         mavenCentral()
-        mavenLocal()
         gradlePluginPortal()
     }
     dependencies {
@@ -17,4 +16,4 @@ buildscript() {
     }
 }
 
-rootProject.name = "PhotonicFixes"
+rootProject.name = 'PhotonicFixes'
